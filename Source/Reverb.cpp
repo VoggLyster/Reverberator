@@ -31,13 +31,6 @@ ReverbProcessor::~ReverbProcessor()
 void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 {
     for (int i = 0; i < N_LINES; i++) {
-        //juce::dsp::ProcessSpec spec = juce::dsp::ProcessSpec();
-        //spec.numChannels = 1;
-        //spec.maximumBlockSize = samplesPerBlock;
-        //spec.sampleRate = samplerate;
-        //filters[i] = juce::dsp::IIR::Filter<float>();
-        //filters[i].coefficients = juce::dsp::IIR::Coefficients<float>().makeFirstOrderLowPass(samplerate, 5000);
-        //filters[i].prepare(spec);
         filters[i] = std::make_unique<Biquad>();
     }
     ready = true;
