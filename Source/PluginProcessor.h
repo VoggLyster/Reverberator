@@ -68,6 +68,7 @@ private:
 
     std::unique_ptr<ReverbProcessor> reverbProcessor;
     
+    bool stereo = false;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReverberatorAudioProcessor)
 };

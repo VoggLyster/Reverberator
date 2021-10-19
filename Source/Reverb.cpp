@@ -31,13 +31,6 @@ ReverbProcessor::~ReverbProcessor()
 void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 {
     for (int i = 0; i < N_LINES; i++) {
-        //juce::dsp::ProcessSpec spec = juce::dsp::ProcessSpec();
-        //spec.numChannels = 1;
-        //spec.maximumBlockSize = samplesPerBlock;
-        //spec.sampleRate = samplerate;
-        //filters[i] = juce::dsp::IIR::Filter<float>();
-        //filters[i].coefficients = juce::dsp::IIR::Coefficients<float>().makeFirstOrderLowPass(samplerate, 5000);
-        //filters[i].prepare(spec);
         filters[i] = std::make_unique<Biquad>();
     }
     ready = true;
@@ -80,6 +73,32 @@ float ReverbProcessor::process(float input)
             dlines(i, pwrite[i]) = 0.0f;
             output += tempOut[i];
         }
+    }
+    return output;
+}
+
+std::vector<float> ReverbProcessor::processStereo(std::vector<float> input)
+{
+    std::vector<float> output = { 0.0f, 0.0f };
+    int n_lines = N_LINES / 2;
+    if (ready) {
+        for (int side = 0; side < 2; side++) {
+            for (int i = side*n_lines; i < (side+1)*n_lines; i++) {
+                dlines(i, pwrite[i]) += b[i] * input[side];
+                tempOut[i] = dlines(i, pread[i]);
+                tempOut[i] = filters[i]->process(tempOut[i]);
+                tempOut[i] *= c[i];
+                for (int j = 0; j < N_LINES; j++) {
+                    dlines(j, pwrite[j]) += A(j, i) * tempOut[i];
+                }
+                // Increment pointers
+                pread[i] = (pread[i] + 1) % M[i];
+                pwrite[i] = (pwrite[i] + 1) % M[i];
+                dlines(i, pwrite[i]) = 0.0f;
+                output[side] += tempOut[i];
+            }
+        }
+
     }
     return output;
 }

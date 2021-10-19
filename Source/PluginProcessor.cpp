@@ -188,6 +188,7 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         }
     }
     reverbProcessor = std::make_unique<ReverbProcessor>(M);
+    DBG("ReverbProcessor created");
 }
 
 ReverberatorAudioProcessor::~ReverberatorAudioProcessor()
@@ -299,17 +300,26 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    stereo = (totalNumInputChannels > 1) ? true : false;
+
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    auto* leftChannelData = buffer.getWritePointer (0);
-    auto* rightChannelData = buffer.getWritePointer (1);
+    DBG("input channels: " + String(totalNumInputChannels) + ", output channels: " + String(totalNumOutputChannels));
+
+    auto* leftChannelData = buffer.getWritePointer(0);
+    auto* rightChannelData = buffer.getWritePointer(1);
 
     for (int n = 0; n < buffer.getNumSamples(); n++) {
-        float output = reverbProcessor->process(leftChannelData[n]);
-        leftChannelData[n] = output;
-        rightChannelData[n] = output;
-        //rightChannelData[n] = reverbProcessor->process(rightChannelData[n]);
+        if (stereo) {
+            std::vector<float> output = reverbProcessor->processStereo({ leftChannelData[n], rightChannelData[n] });
+            leftChannelData[n] = output[0];
+            rightChannelData[n] = output[1];
+        }
+        else {
+            float output = reverbProcessor->process(leftChannelData[n]);
+            leftChannelData[n] = output;
+        }
     }
 }
 
