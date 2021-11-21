@@ -26,11 +26,11 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         addAndMakeVisible(cLabels[i]);
         addAndMakeVisible(cSliders[i]);
         cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));
-        name = "M" + String(i) + "_delay";
-        MLabels[i].setText(name, juce::dontSendNotification);
-        addAndMakeVisible(MLabels[i]);
-        addAndMakeVisible(MSliders[i]);
-        MAttachments[i].reset(new SliderAttachment(valueTreeState, name, MSliders[i]));
+        //name = "M" + String(i) + "_delay";
+        //MLabels[i].setText(name, juce::dontSendNotification);
+        //addAndMakeVisible(MLabels[i]);
+        //addAndMakeVisible(MSliders[i]);
+        //MAttachments[i].reset(new SliderAttachment(valueTreeState, name, MSliders[i]));
         for (int j = 0; j < 5; j++) {
             name = "filter" + String(i) + "_coeff" + String(j);
             coeffLabels[i][j].setText(name, juce::dontSendNotification);
@@ -71,8 +71,8 @@ void ReverberatorAudioProcessorEditor::resized()
         cLabels[i].setBounds(5, 16 * (border + size) + 20 + i * (border + size), 100, size);
         cSliders[i].setBounds(105, 16 * (border + size) + 20 + i * (border + size), 185, size);
 
-        MLabels[i].setBounds(305, i * (border + size), 100, size);
-        MSliders[i].setBounds(405, i * (border + size), 185, size);
+        //MLabels[i].setBounds(305, i * (border + size), 100, size);
+        //MSliders[i].setBounds(405, i * (border + size), 185, size);
 
         if (i == 0) {
             for (int j = 0; j < 5; j++) {

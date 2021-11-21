@@ -34,7 +34,8 @@ public:
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
-    void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* MParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
+    //void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* MParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
+    void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
     float process(float input);
     std::vector<float> processStereo(std::vector<float> input);
 
