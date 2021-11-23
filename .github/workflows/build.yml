@@ -10,16 +10,28 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
       - name: Install dependencies
-        run: sudo apt-get install -y libasound2-dev libjack-jackd2-dev \
-              ladspa-sdk \
-              libx11-dev libxcomposite-dev libxcursor-dev libxcursor-dev libxext-dev libxinerama-dev libxrandr-dev libxrender-dev \
-              libwebkit2gtk-4.0-dev \
-              libglu1-mesa-dev mesa-common-dev
+        run:  sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libjack-jackd2-dev lv2-dev
       - name: Make release
         working-directory: ./Builds/LinuxMakefile
         run: make -j4 CONFIG=Release
-      - name: Publish plugin
-        uses: actions/upload-artifact@v2
+      - name: Zip release
+        run: zip -r Reverberator.zip ./Builds/LinuxMakefile/build/Reverberator.vst3
+      - name: Create release
+        uses: actions/create-release@v1
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Reverberator
-          path: ./Builds/LinuxMakefile/build/Reverberator.vst3
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload release
+        id: upload-release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Reverberator.zip
+          asset_name: Reverberator.zip
+          asset_content_type: application/zip
