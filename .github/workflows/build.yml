@@ -10,7 +10,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
       - name: Install dependencies
-        run: sudo apt install -y x11-xserver-utils 
+        run:  sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libjack-jackd2-dev lv2-dev
       - name: Make release
         working-directory: ./Builds/LinuxMakefile
         run: make -j4 CONFIG=Release
