@@ -1,7 +1,7 @@
 name: Build plugin
 on: 
   push:
-    branches: ['master']
+    branches: ['actions_setup']
 jobs:
   Linux-Build:
     name: Linux build
@@ -10,11 +10,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
       - name: Install dependencies
-        run: sudo apt-get install -y libasound2-dev libjack-jackd2-dev \
-              ladspa-sdk \
-              libx11-dev libxcomposite-dev libxcursor-dev libxcursor-dev libxext-dev libxinerama-dev libxrandr-dev libxrender-dev \
-              libwebkit2gtk-4.0-dev \
-              libglu1-mesa-dev mesa-common-dev
+        run: sudo apt install -y x11-xserver-utils 
       - name: Make release
         working-directory: ./Builds/LinuxMakefile
         run: make -j4 CONFIG=Release
