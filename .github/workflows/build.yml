@@ -1,7 +1,7 @@
 name: Build plugin
 on: 
   push:
-    branches: ['actions_setup']
+    branches: ['master']
 jobs:
   Linux-Build:
     name: Linux build
