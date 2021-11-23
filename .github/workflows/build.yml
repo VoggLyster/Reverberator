@@ -15,7 +15,7 @@ jobs:
         working-directory: ./Builds/LinuxMakefile
         run: make -j4 CONFIG=Release
       - name: Zip release
-        run: zip Reverberator.zip ./Builds/LinuxMakefile/build/Reverberator.vst3
+        run: zip -r Reverberator.zip ./Builds/LinuxMakefile/build/Reverberator.vst3
       - name: Create release
         uses: actions/create-release@v1
         env: 
@@ -29,7 +29,7 @@ jobs:
         id: upload-release_asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN = ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Reverberator.zip
