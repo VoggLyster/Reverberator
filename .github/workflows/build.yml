@@ -14,8 +14,24 @@ jobs:
       - name: Make release
         working-directory: ./Builds/LinuxMakefile
         run: make -j4 CONFIG=Release
-      - name: Publish plugin
-        uses: actions/upload-artifact@v2
+      - name: Zip release
+        run: zip Reverberator.zip ./Builds/LinuxMakefile/build/Reverberator.vst3
+      - name: Create release
+        uses: actions/create-release@v1
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Reverberator
-          path: ./Builds/LinuxMakefile/build/Reverberator.vst3
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload release
+        id: upload-release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN = ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Reverberator.zip
+          asset_name: Reverberator.zip
+          asset_content_type: application/zip
