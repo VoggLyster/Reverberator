@@ -1,0 +1,19 @@
+name: Build plugin
+on: 
+  push:
+    branches: ['master']
+jobs:
+  Linux-Build:
+    name: Linux build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Make release
+        working-directory: ./Builds/LinuxMakefile
+        run: make -j4 CONFIG=Release
+      - name: Publish plugin
+        uses: actions/upload-artifact@v2
+        with:
+          name: Reverberator
+          path: ./Builds/LinuxMakefile/build/Reverberator.vst3
