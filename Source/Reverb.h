@@ -27,6 +27,28 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Biquad)
 };
 
+class SVF
+{
+public:
+    SVF();
+    ~SVF() {}
+
+    void setParameters(float c_hp, float c_bp, float c_lp, float R, float g);
+    float process(float input);
+
+private:
+    float h1 = 0.0f;
+    float h2 = 0.0f;
+    float y_hp = 0.0f;
+    float y_bp = 0.0f;
+    float y_lp = 0.0f;
+    float c_hp = 0.0f;
+    float c_bp = 0.0f;
+    float c_lp = 0.0f;
+    float R = 0.0f;
+    float g = 0.0f;
+};
+
 class ReverbProcessor
 {
 public:
@@ -35,7 +57,8 @@ public:
 
     void prepare(double samplerate, int samplesPerBlock);
     //void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* MParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
-    void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
+    //void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
+    void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterParameters[N_LINES][5]);
     float process(float input);
     std::vector<float> processStereo(std::vector<float> input);
 
@@ -50,7 +73,8 @@ private:
     juce::dsp::Matrix<float> A = juce::dsp::Matrix<float>(N_LINES, N_LINES);
     int pwrite[N_LINES];
     int pread[N_LINES];
-    std::unique_ptr<Biquad> filters[N_LINES];
+    //std::unique_ptr<Biquad> filters[N_LINES];
+    std::unique_ptr<SVF> filters[N_LINES];
 
     // Temp parameters for comparison 
     int _M;

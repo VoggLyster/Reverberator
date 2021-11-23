@@ -31,7 +31,8 @@ ReverbProcessor::~ReverbProcessor()
 void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 {
     for (int i = 0; i < N_LINES; i++) {
-        filters[i] = std::make_unique<Biquad>();
+        //filters[i] = std::make_unique<Biquad>();
+        filters[i] = std::make_unique<SVF>();
     }
     ready = true;
 }
@@ -48,7 +49,8 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES], st
         //    M[i] = _M;
         //    delayLenghtChanged = true;
         //}
-        filters[i]->setCoeffs(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
+        //filters[i]->setCoeffs(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
+        filters[i]->setParameters(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
     }
     if (delayLenghtChanged) {
         dlines = juce::dsp::Matrix<float>(N_LINES, juce::findMaximum(M, N_LINES));
@@ -126,4 +128,27 @@ float Biquad::process(float input) {
     x1 = x0;
 
     return y0;
+}
+
+SVF::SVF() {}
+
+void SVF::setParameters(float _c_hp, float _c_bp, float _c_lp, float _R, float _g) {
+    if (c_hp != _c_hp || c_bp != _c_bp || c_lp != _c_lp || R != _R || g != _g) {
+        c_hp = _c_hp;
+        c_bp = _c_bp;
+        c_lp = _c_lp;
+        R = _R;
+        g = _g;
+        h1, h2 = 0.0f;
+        y_hp, y_bp, y_lp = 0.0f;
+    }
+}
+
+float SVF::process(float input) {
+    y_bp = (g * (input - h2 + h1)) / (1 + g * (g + 2 * R));
+    y_lp = g * y_bp + h2;
+    y_hp = input - y_lp - 2 * R * y_bp;
+    h1 = 2 * y_bp - h1;
+    h2 = 2 * y_lp - h2;
+    return c_hp * y_hp + c_bp * y_bp + c_lp * y_lp;
 }
