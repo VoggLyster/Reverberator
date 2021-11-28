@@ -55,23 +55,6 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
             std::make_unique<AudioParameterFloat>("c14_gain", "c14_gain", 0.0f, 1.0f, 0.9f),
             std::make_unique<AudioParameterFloat>("c15_gain", "c15_gain", 0.0f, 1.0f, 0.9f),
 
-            //std::make_unique<AudioParameterInt>("M0_delay", "M0_delay", 500, 30000, 2927),
-            //std::make_unique<AudioParameterInt>("M1_delay", "M1_delay", 500, 30000, 2593),
-            //std::make_unique<AudioParameterInt>("M2_delay", "M2_delay", 500, 30000, 2273),
-            //std::make_unique<AudioParameterInt>("M3_delay", "M3_delay", 500, 30000, 3697),
-            //std::make_unique<AudioParameterInt>("M4_delay", "M4_delay", 500, 30000, 1877),
-            //std::make_unique<AudioParameterInt>("M5_delay", "M5_delay", 500, 30000, 3877),
-            //std::make_unique<AudioParameterInt>("M6_delay", "M6_delay", 500, 30000, 2477),
-            //std::make_unique<AudioParameterInt>("M7_delay", "M7_delay", 500, 30000, 3461),
-            //std::make_unique<AudioParameterInt>("M8_delay", "M8_delay", 500, 30000, 1609),
-            //std::make_unique<AudioParameterInt>("M9_delay", "M9_delay", 500, 30000, 3779),
-            //std::make_unique<AudioParameterInt>("M10_delay", "M10_delay", 500, 30000, 3541),
-            //std::make_unique<AudioParameterInt>("M11_delay", "M11_delay", 500, 30000, 4259),
-            //std::make_unique<AudioParameterInt>("M12_delay", "M12_delay", 500, 30000, 1669),
-            //std::make_unique<AudioParameterInt>("M13_delay", "M13_delay", 500, 30000, 3539),
-            //std::make_unique<AudioParameterInt>("M14_delay", "M14_delay", 500, 30000, 3637),
-            //std::make_unique<AudioParameterInt>("M15_delay", "M15_delay", 500, 30000, 4013),
-
             std::make_unique<AudioParameterFloat>("filter0_coeff0", "filter0_coeff0", 0.0f, 1.0f, 0.5f),
             std::make_unique<AudioParameterFloat>("filter0_coeff1", "filter0_coeff1", 0.0f, 1.0f, 0.5f),
             std::make_unique<AudioParameterFloat>("filter0_coeff2", "filter0_coeff2", 0.0f, 1.0f, 0.5f),
@@ -178,9 +161,6 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         parameterName = "c" + juce::String(i) + "_gain";
         bParameters[i] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
-        //parameterName = "M" + juce::String(i) + "_delay";
-        //MParameters[i] = parameters.getRawParameterValue(parameterName);
-        //parameters.addParameterListener(parameterName, this);
         for (int j = 0; j < 5; j++) {
             parameterName = "filter" + juce::String(i) + "_coeff" + juce::String(j);
             filterCoeffParameters[i][j] = parameters.getRawParameterValue(parameterName);
@@ -301,7 +281,8 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    stereo = (totalNumInputChannels > 1) ? true : false;
+    //stereo = (totalNumInputChannels > 1) ? true : false;
+    stereo = false;
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
