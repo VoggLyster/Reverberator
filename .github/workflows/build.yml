@@ -16,14 +16,24 @@ jobs:
         run: make -j4 CONFIG=Release
       - name: Zip release
         run: zip -r Reverberator.zip ./Builds/LinuxMakefile/build/Reverberator.vst3
+      - name: Get previous tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+        with:
+          fallback: v0.1
+      - name: Get next version
+        id: semver
+        uses: WyriHaximus/github-action-next-semvers@v1
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ steps.semver.outputs.patch }}
+          release_name: Release ${{ steps.semver.outputs.patch }}
           draft: false
           prerelease: false
       - name: Upload release
