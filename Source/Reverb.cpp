@@ -37,24 +37,13 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     ready = true;
 }
 
-//void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* MParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]) {
 void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]) {
     
     for (int i = 0; i < N_LINES; i++) {
         b[i] = *bParameters[i];
         c[i] = *cParameters[i];
 
-        //_M = *MParameters[i];
-        //if (M[i] != _M) {
-        //    M[i] = _M;
-        //    delayLenghtChanged = true;
-        //}
-        //filters[i]->setCoeffs(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
         filters[i]->setParameters(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
-    }
-    if (delayLenghtChanged) {
-        dlines = juce::dsp::Matrix<float>(N_LINES, juce::findMaximum(M, N_LINES));
-        delayLenghtChanged = false;
     }
 }
 
