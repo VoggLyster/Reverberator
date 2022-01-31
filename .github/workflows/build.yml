@@ -1,7 +1,7 @@
 name: Build plugin
 on: 
   push:
-    branches: ['master']
+    branches: ['Toy']
 jobs:
   Linux-Build:
     name: Linux build
@@ -34,8 +34,8 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.semver.outputs.patch }}
-          release_name: Release ${{ steps.semver.outputs.patch }}
+          tag_name: toy_${{ steps.semver.outputs.patch }}
+          release_name: Toy release ${{ steps.semver.outputs.patch }}
           draft: false
           prerelease: false
       - name: Upload release

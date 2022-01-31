@@ -21,7 +21,7 @@ ReverbProcessor::ReverbProcessor(int delays[N_LINES])
         tempOut[i] = 0.0f;
         M[i] = delays[i];
     }
-    A = juce::dsp::Matrix<float>(N_LINES, N_LINES, hadamard);
+    A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
     for (int i = 0; i < N_LINES; i++) {
         //filters[i] = std::make_unique<Biquad>();
         filters[i] = std::make_unique<SVF>();

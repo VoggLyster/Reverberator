@@ -281,7 +281,8 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    stereo = (totalNumInputChannels > 1) ? true : false;
+    /*stereo = (totalNumInputChannels > 1) ? true : false;*/
+    stereo = false;
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
