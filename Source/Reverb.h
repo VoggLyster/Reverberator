@@ -8,6 +8,7 @@
   ==============================================================================
 */
 #include <JuceHeader.h>
+#include "LFO.h"
 #define N_LINES 8
 
 class Biquad
@@ -56,7 +57,7 @@ public:
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
-    void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]);
+    void setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5], std::atomic<float>* modFreqParameters[N_LINES]);
     float process(float input);
     std::vector<float> processStereo(std::vector<float> input);
 
@@ -67,11 +68,15 @@ private:
     float b[N_LINES];
     float tempOut[N_LINES];
     int M[N_LINES];
+    
     juce::dsp::Matrix<float> dlines;
+    float s[N_LINES];
+    float s_prev[N_LINES];
     juce::dsp::Matrix<float> A = juce::dsp::Matrix<float>(N_LINES, N_LINES);
-    int pwrite[N_LINES];
-    int pread[N_LINES];
+    int ptr[N_LINES];
     std::unique_ptr<SVF> filters[N_LINES];
+    std::unique_ptr<LFO> lfos[N_LINES];
+    float lfoFrequencies[N_LINES] = { 2.0f, 1.0f, 1.3f, 0.7f, 4.0f, 0.3f, 0.2f, 1.1f };
 
     float householder[256] =
     { 0.25, -0.25,	-0.25,	-0.25,	-0.25,	 0.25,	 0.25,	 0.25,	-0.25,  0.25,	 0.25,	 0.25,	-0.25,  0.25,	 0.25,	 0.25,

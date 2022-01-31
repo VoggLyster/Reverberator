@@ -36,9 +36,9 @@ private:
     Label cLabels[N_LINES];
     Slider cSliders[N_LINES];
     std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
-    //Label MLabels[N_LINES];
-    //Slider MSliders[N_LINES];
-    //std::unique_ptr<SliderAttachment> MAttachments[N_LINES];
+    Label modFreqLabels[N_LINES];
+    Slider modFreqSliders[N_LINES];
+    std::unique_ptr<SliderAttachment> modFreqAttachments[N_LINES];
     Label coeffLabels[N_LINES][5];
     Slider coeffSliders[N_LINES][5];
     std::unique_ptr<SliderAttachment> coeffAttachments[N_LINES][5];
