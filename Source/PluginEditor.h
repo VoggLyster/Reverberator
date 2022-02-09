@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "Divider.h"
 
 //==============================================================================
 /**
@@ -29,6 +30,17 @@ public:
 private:
     AudioProcessorValueTreeState& valueTreeState;
     ReverberatorAudioProcessor& audioProcessor;
+    Viewport scrollableView;
+    Component mainComponent;
+
+    Label delayMaxLengthLabel;
+    Slider delayMaxLengthSlider;
+    std::unique_ptr<SliderAttachment> delayMaxLengthAttachment;
+    Label delayMinLengthLabel;
+    Slider delayMinLengthSlider;
+    std::unique_ptr<SliderAttachment> delayMinLengthAttachment;
+
+    Divider dividers[N_LINES];
 
     Label bLabels[N_LINES];
     Slider bSliders[N_LINES];
@@ -36,12 +48,10 @@ private:
     Label cLabels[N_LINES];
     Slider cSliders[N_LINES];
     std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
-    //Label MLabels[N_LINES];
-    //Slider MSliders[N_LINES];
-    //std::unique_ptr<SliderAttachment> MAttachments[N_LINES];
     Label coeffLabels[N_LINES][5];
     Slider coeffSliders[N_LINES][5];
     std::unique_ptr<SliderAttachment> coeffAttachments[N_LINES][5];
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReverberatorAudioProcessorEditor)
 };

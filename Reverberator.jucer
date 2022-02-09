@@ -5,6 +5,7 @@
               version="0.0.1" companyName="Vogg" companyWebsite="Vogg.dk">
   <MAINGROUP id="zGan0x" name="Reverberator">
     <GROUP id="{4B84C73D-B7AE-9F98-5CA2-D1C6862C5DCA}" name="Source">
+      <FILE id="tFUEF2" name="Divider.h" compile="0" resource="0" file="Source/Divider.h"/>
       <FILE id="bIzA1I" name="Reverb.cpp" compile="1" resource="0" file="Source/Reverb.cpp"/>
       <FILE id="bAlBId" name="Reverb.h" compile="0" resource="0" file="Source/Reverb.h"/>
       <FILE id="PPhGxJ" name="PluginProcessor.cpp" compile="1" resource="0"

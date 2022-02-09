@@ -11,7 +11,7 @@
 #include "Reverb.h"
 
 ReverbProcessor::ReverbProcessor(int delays[N_LINES])
-    : dlines(juce::dsp::Matrix<float>(N_LINES, juce::findMaximum(delays, N_LINES)))
+    : dlines(juce::dsp::Matrix<float>(N_LINES, 10000/*juce::findMaximum(delays, N_LINES)*/))
 {
     for (int i = 0; i < N_LINES; i++) {
         b[i] = 1.0f;
@@ -34,16 +34,26 @@ ReverbProcessor::~ReverbProcessor()
 
 void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 {
+    fs = samplerate;
     ready = true;
 }
 
-void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES], std::atomic<float>* cParameters[N_LINES], std::atomic<float>* filterCoeffParameters[N_LINES][5]) {
+void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES], 
+    std::atomic<float>* cParameters[N_LINES], 
+    std::atomic<float>* filterCoeffParameters[N_LINES][5],
+    std::atomic<float>* delayLengthMaxParameter,
+    std::atomic<float>* delayLengthMinParameter) {
     
+    delayLengthMaxSamples = 2500 + int(2500 * *delayLengthMaxParameter);
+    delayLengthMinSamples = 100 + int(2400 * *delayLengthMinParameter);
+    std::vector<int> delayLengths = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
+
     for (int i = 0; i < N_LINES; i++) {
         b[i] = *bParameters[i];
         c[i] = *cParameters[i];
 
         filters[i]->setParameters(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
+        M[i] = delayLengths[i];
     }
 }
 
@@ -93,6 +103,35 @@ std::vector<float> ReverbProcessor::processStereo(std::vector<float> input)
 
     }
     return output;
+}
+
+std::vector<int> ReverbProcessor::generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples)
+{
+    int range = delayLengthMaxSamples - delayLengthMinSamples;
+    int rangeInterval = range / jmax((N_LINES - 1),1);
+    
+    std::vector<int> coprimeRange = std::vector<int>();
+
+    for (int i = 0; i < N_LINES; i++) {
+        int number = delayLengthMinSamples + (i * rangeInterval);
+        if (i > 0) {
+            for (int j = i-1; j >= 0; j--) {
+                while (gcd(number, coprimeRange[j]) != 1) {
+                    number -= 1;
+                }
+            }
+        }
+        coprimeRange.push_back(number);
+    }
+
+    return coprimeRange;
+}
+
+int ReverbProcessor::gcd(int a, int b)
+{
+    if (b == 0)
+        return a;
+    return gcd(b, a % b);
 }
 
 Biquad::Biquad() {}

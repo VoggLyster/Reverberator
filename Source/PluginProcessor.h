@@ -11,8 +11,6 @@
 #include <JuceHeader.h>
 #include "Reverb.h"
 
-//#define N_LINES 16
-
 //==============================================================================
 /**
 */
@@ -58,12 +56,16 @@ public:
 
     void parameterChanged(const String& parameterID, float newValue) override;
 
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
 private:
     AudioProcessorValueTreeState parameters;
     std::atomic<float>* cParameters[N_LINES];
     std::atomic<float>* bParameters[N_LINES];
     std::atomic<float>* MParameters[N_LINES];
     std::atomic<float>* filterCoeffParameters[N_LINES][5];
+    std::atomic<float>* delayLengthMaxParameter;
+    std::atomic<float>* delayLengthMinParameter;
     int M[16] = { 2927, 2593, 2273, 3697, 1877, 3877, 2477, 3461, 1609, 3779, 3541, 4259, 1669, 3539, 3637, 4013, };
 
     std::unique_ptr<ReverbProcessor> reverbProcessor;
