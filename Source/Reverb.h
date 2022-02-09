@@ -9,7 +9,6 @@
 */
 #include <JuceHeader.h>
 #include "LFO.h"
-#define N_LINES 16
 
 class Biquad
 {
