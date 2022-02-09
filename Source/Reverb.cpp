@@ -21,6 +21,22 @@ ReverbProcessor::ReverbProcessor(int delays[N_LINES])
         tempOut[i] = 0.0f;
         M[i] = delays[i];
     }
+    const float* householder;
+    switch (N_LINES)
+    {
+    case 16:
+        householder = householder16;
+        break;
+    case 4:
+        householder = householder4;
+        break;
+    case 2:
+        householder = householder2;
+        break;
+    default:
+        householder = householder1;
+        break;
+    }
     A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
     for (int i = 0; i < N_LINES; i++) {
         //filters[i] = std::make_unique<Biquad>();
