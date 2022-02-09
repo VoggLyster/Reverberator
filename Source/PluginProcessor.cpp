@@ -19,141 +19,15 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
     )
-    , parameters(*this, nullptr, Identifier("Reverberator"),
-        {
-            std::make_unique<AudioParameterFloat>("b0_gain", "b0_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b1_gain", "b1_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b2_gain", "b2_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b3_gain", "b3_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b4_gain", "b4_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b5_gain", "b5_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b6_gain", "b6_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b7_gain", "b7_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b8_gain", "b8_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b9_gain", "b9_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b10_gain", "b10_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b11_gain", "b11_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b12_gain", "b12_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b13_gain", "b13_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b14_gain", "b14_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("b15_gain", "b15_gain", 0.0f, 1.0f, 0.9f),
-
-            std::make_unique<AudioParameterFloat>("c0_gain", "c0_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c1_gain", "c1_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c2_gain", "c2_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c3_gain", "c3_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c4_gain", "c4_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c5_gain", "c5_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c6_gain", "c6_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c7_gain", "c7_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c8_gain", "c8_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c9_gain", "c9_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c10_gain", "c10_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c11_gain", "c11_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c12_gain", "c12_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c13_gain", "c13_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c14_gain", "c14_gain", 0.0f, 1.0f, 0.9f),
-            std::make_unique<AudioParameterFloat>("c15_gain", "c15_gain", 0.0f, 1.0f, 0.9f),
-
-            std::make_unique<AudioParameterFloat>("filter0_coeff0", "filter0_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter0_coeff1", "filter0_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter0_coeff2", "filter0_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter0_coeff3", "filter0_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter0_coeff4", "filter0_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter1_coeff0", "filter1_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter1_coeff1", "filter1_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter1_coeff2", "filter1_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter1_coeff3", "filter1_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter1_coeff4", "filter1_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter2_coeff0", "filter2_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter2_coeff1", "filter2_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter2_coeff2", "filter2_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter2_coeff3", "filter2_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter2_coeff4", "filter2_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter3_coeff0", "filter3_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter3_coeff1", "filter3_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter3_coeff2", "filter3_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter3_coeff3", "filter3_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter3_coeff4", "filter3_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter4_coeff0", "filter4_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter4_coeff1", "filter4_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter4_coeff2", "filter4_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter4_coeff3", "filter4_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter4_coeff4", "filter4_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter5_coeff0", "filter5_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter5_coeff1", "filter5_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter5_coeff2", "filter5_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter5_coeff3", "filter5_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter5_coeff4", "filter5_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter6_coeff0", "filter6_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter6_coeff1", "filter6_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter6_coeff2", "filter6_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter6_coeff3", "filter6_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter6_coeff4", "filter6_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter7_coeff0", "filter7_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter7_coeff1", "filter7_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter7_coeff2", "filter7_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter7_coeff3", "filter7_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter7_coeff4", "filter7_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter8_coeff0", "filter8_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter8_coeff1", "filter8_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter8_coeff2", "filter8_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter8_coeff3", "filter8_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter8_coeff4", "filter8_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter9_coeff0", "filter9_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter9_coeff1", "filter9_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter9_coeff2", "filter9_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter9_coeff3", "filter9_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter9_coeff4", "filter9_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter10_coeff0", "filter10_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter10_coeff1", "filter10_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter10_coeff2", "filter10_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter10_coeff3", "filter10_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter10_coeff4", "filter10_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter11_coeff0", "filter11_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter11_coeff1", "filter11_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter11_coeff2", "filter11_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter11_coeff3", "filter11_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter11_coeff4", "filter11_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter12_coeff0", "filter12_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter12_coeff1", "filter12_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter12_coeff2", "filter12_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter12_coeff3", "filter12_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter12_coeff4", "filter12_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter13_coeff0", "filter13_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter13_coeff1", "filter13_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter13_coeff2", "filter13_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter13_coeff3", "filter13_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter13_coeff4", "filter13_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter14_coeff0", "filter14_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter14_coeff1", "filter14_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter14_coeff2", "filter14_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter14_coeff3", "filter14_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter14_coeff4", "filter14_coeff4", 0.0f, 1.0f, 0.5f),
-
-            std::make_unique<AudioParameterFloat>("filter15_coeff0", "filter15_coeff0", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter15_coeff1", "filter15_coeff1", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter15_coeff2", "filter15_coeff2", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter15_coeff3", "filter15_coeff3", 0.0f, 1.0f, 0.5f),
-            std::make_unique<AudioParameterFloat>("filter15_coeff4", "filter15_coeff4", 0.0f, 1.0f, 0.5f),
-
-        })
+    , parameters(*this, nullptr, Identifier("Reverberator"), createParameterLayout())
 {
     juce::String parameterName = "";
+    parameterName = "delay_length_max";
+    delayLengthMaxParameter = parameters.getRawParameterValue(parameterName);
+    parameters.addParameterListener(parameterName, this);
+    parameterName = "delay_length_min";
+    delayLengthMinParameter = parameters.getRawParameterValue(parameterName);
+    parameters.addParameterListener(parameterName, this);
     for (int i = 0; i < N_LINES; i++) {
         parameterName = "b" + juce::String(i) + "_gain";
         cParameters[i] = parameters.getRawParameterValue(parameterName);
@@ -161,13 +35,27 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         parameterName = "c" + juce::String(i) + "_gain";
         bParameters[i] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
-        for (int j = 0; j < 5; j++) {
-            parameterName = "filter" + juce::String(i) + "_coeff" + juce::String(j);
-            filterCoeffParameters[i][j] = parameters.getRawParameterValue(parameterName);
-            parameters.addParameterListener(parameterName, this);
-        }
+        parameterName = "c_hp" + juce::String(i);
+        filterCoeffParameters[i][0] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+        parameterName = "c_bp" + juce::String(i);
+        filterCoeffParameters[i][1] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+        parameterName = "c_lp" + juce::String(i);
+        filterCoeffParameters[i][2] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+        parameterName = "R" + juce::String(i);
+        filterCoeffParameters[i][3] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+        parameterName = "g" + juce::String(i);
+        filterCoeffParameters[i][4] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+        parameterName = "mod" + juce::String(i) + "_freq";
+        modFreqParameters[i] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
     }
-    reverbProcessor = std::make_unique<ReverbProcessor>(M);
+
+    reverbProcessor = std::make_unique<ReverbProcessor>();
     DBG("ReverbProcessor created");
 }
 
@@ -241,8 +129,7 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    //reverbProcessor->setParameters(bParameters, cParameters, MParameters, filterCoeffParameters);
-    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters);
+    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -281,7 +168,8 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    stereo = (totalNumInputChannels > 1) ? true : false;
+    /*stereo = (totalNumInputChannels > 1) ? true : false;*/
+    stereo = false;
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
@@ -333,8 +221,37 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    //reverbProcessor->setParameters(bParameters, cParameters, MParameters, filterCoeffParameters);
-    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters);
+    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout params;
+    
+    params.add(std::make_unique<AudioParameterFloat>("delay_length_max", "delay_length_max", 0.0f, 1.0f, 0.5f)); //Max delay length = [2500,5000]
+    params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 1.0f, 0.5f)); //Min delay length = [100, 2500]
+    juce::String name = "";
+    for (int i = 0; i < N_LINES; i++) {
+        name = "b" + String(i) + "_gain";
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
+        name = "c" + String(i) + "_gain";
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
+        name = "c_hp" + String(i);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        name = "c_bp" + String(i);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        name = "c_lp" + String(i);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        name = "R" + String(i);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        name = "g" + String(i);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        name = "mod" + String(i) + "_freq";
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+    }
+
+
+    return params;
 }
 
 //==============================================================================
