@@ -13,11 +13,24 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         run:  sudo apt install libasound2-dev libcurl4-openssl-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev libjack-jackd2-dev lv2-dev
-      - name: Make release
+      - name: Make 1ch version
         working-directory: ./Builds/LinuxMakefile
-        run: make -j4 CONFIG=Release
+        run: make -j4 CONFIG=Release_1ch
+      - name: Make 4ch version
+        working-directory: ./Builds/LinuxMakefile
+        run: make -j4 CONFIG=Release_4ch
+      - name: Make 16ch version
+        working-directory: ./Builds/LinuxMakefile
+        run: make -j4 CONFIG=Release_16ch
+      - name: Make artifact folder
+        run: mkdir artifacts
+      - name: Move build files
+        run: | 
+          mv Builds/LinuxMakefile/build/Reverberator_1ch.vst3 artifacts/Reverberator_1ch.vst3 \
+          mv Builds/LinuxMakefile/build/Reverberator_4ch.vst3 artifacts/Reverberator_4ch.vst3 \
+          mv Builds/LinuxMakefile/build/Reverberator_16ch.vst3 artifacts/Reverberator_16ch.vst3 \
       - name: Zip release
-        run: zip -r Reverberator.zip ./Builds/LinuxMakefile/build/Reverberator.vst3
+        run: zip -r Reverberator.zip artifacts
       - name: Get previous tag
         id: previoustag
         uses: WyriHaximus/github-action-get-previous-tag@v1
@@ -34,8 +47,8 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: toy_${{ steps.semver.outputs.patch }}
-          release_name: Toy release ${{ steps.semver.outputs.patch }}
+          tag_name: ${{ steps.semver.outputs.patch }}
+          release_name: Release ${{ steps.semver.outputs.patch }}
           draft: false
           prerelease: false
       - name: Upload release
