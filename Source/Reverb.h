@@ -8,7 +8,8 @@
   ==============================================================================
 */
 #include <JuceHeader.h>
-#define N_LINES 4
+#include "LFO.h"
+#define N_LINES 16
 
 class Biquad
 {
@@ -52,7 +53,7 @@ private:
 class ReverbProcessor
 {
 public:
-    ReverbProcessor(int delays[N_LINES]);
+    ReverbProcessor();
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
@@ -60,7 +61,8 @@ public:
         std::atomic<float>* cParameters[N_LINES], 
         std::atomic<float>* filterCoeffParameters[N_LINES][5],
         std::atomic<float>* delayLengthMaxParameter,
-        std::atomic<float>* delayLengthMinParameter);
+        std::atomic<float>* delayLengthMinParameter,
+        std::atomic<float>* modFrequencyParameters[N_LINES]);
     float process(float input);
     std::vector<float> processStereo(std::vector<float> input);
     std::vector<int> generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples);
@@ -73,14 +75,20 @@ private:
     float c[N_LINES];
     float b[N_LINES];
     float tempOut[N_LINES];
-    int M[N_LINES];
+    //int M[N_LINES];
+    int delayLengths[N_LINES];
     int delayLengthMaxSamples;
     int delayLengthMinSamples;
-    juce::dsp::Matrix<float> dlines;
+    //juce::dsp::Matrix<float> dlines;
+    std::unique_ptr<juce::dsp::DelayLine<float>> delayLines[N_LINES];
+    float s[N_LINES];
+    float s_prev[N_LINES];
     juce::dsp::Matrix<float> A = juce::dsp::Matrix<float>(N_LINES, N_LINES);
-    int pwrite[N_LINES];
-    int pread[N_LINES];
+    //int ptr[N_LINES];
     std::unique_ptr<SVF> filters[N_LINES];
+    std::unique_ptr<LFO> lfos[N_LINES];
+    float lfoFrequencies[N_LINES];
+    float modDepth[N_LINES];
 
     float predelayMaxLengthMs = 100;
 

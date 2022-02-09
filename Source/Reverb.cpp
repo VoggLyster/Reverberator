@@ -10,16 +10,16 @@
 
 #include "Reverb.h"
 
-ReverbProcessor::ReverbProcessor(int delays[N_LINES])
-    : dlines(juce::dsp::Matrix<float>(N_LINES, 10000/*juce::findMaximum(delays, N_LINES)*/))
+ReverbProcessor::ReverbProcessor()
 {
     for (int i = 0; i < N_LINES; i++) {
         b[i] = 1.0f;
         c[i] = 1.0f;
-        pwrite[i] = 0;
-        pread[i] = 1;
         tempOut[i] = 0.0f;
-        M[i] = delays[i];
+        s[i] = 0.0f;
+        s_prev[i] = 0.0f;
+        delayLengths[i] = 0;
+        modDepth[i] = 10;
     }
     const float* householder;
     switch (N_LINES)
@@ -39,8 +39,10 @@ ReverbProcessor::ReverbProcessor(int delays[N_LINES])
     }
     A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
     for (int i = 0; i < N_LINES; i++) {
-        //filters[i] = std::make_unique<Biquad>();
+        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(6000);
         filters[i] = std::make_unique<SVF>();
+        lfos[i] = std::make_unique<LFO>();
+        lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
     }
 }
 
@@ -51,6 +53,15 @@ ReverbProcessor::~ReverbProcessor()
 void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 {
     fs = samplerate;
+    dsp::ProcessSpec procSpec = dsp::ProcessSpec();
+    procSpec.maximumBlockSize = samplesPerBlock;
+    procSpec.numChannels = 2;
+    procSpec.sampleRate = samplerate;
+    for (int i = 0; i < N_LINES; i++) {
+        delayLines[i]->prepare(procSpec);
+        lfos[i]->prepare(fs);
+        lfos[i]->setFrequency(lfoFrequencies[i]);      
+    }
     ready = true;
 }
 
@@ -58,38 +69,45 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::atomic<float>* cParameters[N_LINES], 
     std::atomic<float>* filterCoeffParameters[N_LINES][5],
     std::atomic<float>* delayLengthMaxParameter,
-    std::atomic<float>* delayLengthMinParameter) {
+    std::atomic<float>* delayLengthMinParameter,
+    std::atomic<float>* modFrequencyParameters[N_LINES]) {
     
     delayLengthMaxSamples = 2500 + int(2500 * *delayLengthMaxParameter);
     delayLengthMinSamples = 100 + int(2400 * *delayLengthMinParameter);
-    std::vector<int> delayLengths = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
+    std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
 
     for (int i = 0; i < N_LINES; i++) {
         b[i] = *bParameters[i];
         c[i] = *cParameters[i];
 
         filters[i]->setParameters(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
-        M[i] = delayLengths[i];
+        /*M[i] = delayLengths[i];*/
+        delayLengths[i] = delayLengths_[i];
+        delayLines[i]->setDelay(delayLengths[i]);
+        lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
     }
 }
 
 float ReverbProcessor::process(float input)
 {
     float output = 0.0f;
+    for (int i = 0; i < N_LINES; i++) {
+        s[i] = 0.0f;
+    }
     if (ready) {
         for (int i = 0; i < N_LINES; i++) {
-            dlines(i, pwrite[i]) += b[i] * input;
-            tempOut[i] = dlines(i, pread[i]);
+            float fdelay = delayLengths[i] - lfos[i]->getValue() * modDepth[i];
+            tempOut[i] = delayLines[i]->popSample(0, fdelay, true);
+            delayLines[i]->pushSample(0, b[i] * input + s_prev[i]);
             tempOut[i] = filters[i]->process(tempOut[i]);
             tempOut[i] *= c[i];
             for (int j = 0; j < N_LINES; j++) {
-                dlines(j, pwrite[j]) += A(j, i) * tempOut[i];
+                s[j] += A(j, i) * tempOut[i];
             }
-            // Increment pointers
-            pread[i] = (pread[i] + 1) % M[i];
-            pwrite[i] = (pwrite[i] + 1) % M[i];
-            dlines(i, pwrite[i]) = 0.0f;
             output += tempOut[i];
+        }
+        for (int i = 0; i < N_LINES; i++) {
+            s_prev[i] = s[i];
         }
     }
     return output;
@@ -98,26 +116,26 @@ float ReverbProcessor::process(float input)
 std::vector<float> ReverbProcessor::processStereo(std::vector<float> input)
 {
     std::vector<float> output = { 0.0f, 0.0f };
-    int n_lines = N_LINES / 2;
-    if (ready) {
-        for (int side = 0; side < 2; side++) {
-            for (int i = side*n_lines; i < (side+1)*n_lines; i++) {
-                dlines(i, pwrite[i]) += b[i] * input[side];
-                tempOut[i] = dlines(i, pread[i]);
-                tempOut[i] = filters[i]->process(tempOut[i]);
-                tempOut[i] *= c[i];
-                for (int j = 0; j < N_LINES; j++) {
-                    dlines(j, pwrite[j]) += A(j, i) * tempOut[i];
-                }
-                // Increment pointers
-                pread[i] = (pread[i] + 1) % M[i];
-                pwrite[i] = (pwrite[i] + 1) % M[i];
-                dlines(i, pwrite[i]) = 0.0f;
-                output[side] += tempOut[i];
-            }
-        }
+    //int n_lines = N_LINES / 2;
+    //if (ready) {
+    //    for (int side = 0; side < 2; side++) {
+    //        for (int i = side*n_lines; i < (side+1)*n_lines; i++) {
+    //            dlines(i, pwrite[i]) += b[i] * input[side];
+    //            tempOut[i] = dlines(i, pread[i]);
+    //            tempOut[i] = filters[i]->process(tempOut[i]);
+    //            tempOut[i] *= c[i];
+    //            for (int j = 0; j < N_LINES; j++) {
+    //                dlines(j, pwrite[j]) += A(j, i) * tempOut[i];
+    //            }
+    //            // Increment pointers
+    //            pread[i] = (pread[i] + 1) % M[i];
+    //            pwrite[i] = (pwrite[i] + 1) % M[i];
+    //            dlines(i, pwrite[i]) = 0.0f;
+    //            output[side] += tempOut[i];
+    //        }
+    //    }
 
-    }
+    //}
     return output;
 }
 

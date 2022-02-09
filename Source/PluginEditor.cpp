@@ -52,6 +52,11 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         mainComponent.addAndMakeVisible(coeffLabels[i][4]);
         mainComponent.addAndMakeVisible(coeffSliders[i][4]);
         coeffAttachments[i][4].reset(new SliderAttachment(valueTreeState, name, coeffSliders[i][4]));
+        name = "mod" + String(i) + "_freq";
+        modFreqLabels[i].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(modFreqLabels[i]);
+        mainComponent.addAndMakeVisible(modFreqSliders[i]);
+        modFreqAttachments[i].reset(new SliderAttachment(valueTreeState, name, modFreqSliders[i]));
     }
 
     delayMaxLengthLabel.setText("delay_length_max", juce::dontSendNotification);
@@ -86,7 +91,7 @@ void ReverberatorAudioProcessorEditor::paint (juce::Graphics& g)
 void ReverberatorAudioProcessorEditor::resized()
 {
     scrollableView.setBoundsRelative(0, 0, 1, 1);
-    int componentSize = 350 * N_LINES;
+    int componentSize = 400 * N_LINES;
     mainComponent.setBounds(0, 0, getWidth(), componentSize);
 
     int size = 20;
@@ -116,6 +121,9 @@ void ReverberatorAudioProcessorEditor::resized()
             coeffSliders[i][j].setBounds(105, height, 185, size);
             height += 25;
         }
+        modFreqLabels[i].setBounds(5, height, 100, size);
+        modFreqSliders[i].setBounds(105, height, 185, size);
+        height += 25;
     }
     DBG(String(height));
 }

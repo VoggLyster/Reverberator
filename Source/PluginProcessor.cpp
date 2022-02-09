@@ -50,8 +50,12 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         parameterName = "g" + juce::String(i);
         filterCoeffParameters[i][4] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
+        parameterName = "mod" + juce::String(i) + "_freq";
+        modFreqParameters[i] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
     }
-    reverbProcessor = std::make_unique<ReverbProcessor>(M);
+
+    reverbProcessor = std::make_unique<ReverbProcessor>();
     DBG("ReverbProcessor created");
 }
 
@@ -125,8 +129,7 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    //reverbProcessor->setParameters(bParameters, cParameters, MParameters, filterCoeffParameters);
-    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter);
+    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -218,8 +221,7 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    //reverbProcessor->setParameters(bParameters, cParameters, MParameters, filterCoeffParameters);
-    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter);
+    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::createParameterLayout()
@@ -243,6 +245,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
         name = "R" + String(i);
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
         name = "g" + String(i);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        name = "mod" + String(i) + "_freq";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
     }
 
