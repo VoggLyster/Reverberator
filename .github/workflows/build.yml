@@ -26,9 +26,9 @@ jobs:
         run: mkdir artifacts
       - name: Move build files
         run: | 
-          mv Builds/LinuxMakefile/build/Reverberator_1ch.vst3 artifacts/Reverberator_1ch.vst3 \
-          mv Builds/LinuxMakefile/build/Reverberator_4ch.vst3 artifacts/Reverberator_4ch.vst3 \
-          mv Builds/LinuxMakefile/build/Reverberator_16ch.vst3 artifacts/Reverberator_16ch.vst3 \
+          mv Builds/LinuxMakefile/build/Reverberator_1ch.vst3 artifacts \
+          mv Builds/LinuxMakefile/build/Reverberator_4ch.vst3 artifacts \
+          mv Builds/LinuxMakefile/build/Reverberator_16ch.vst3 artifacts \
       - name: Zip release
         run: zip -r Reverberator.zip artifacts
       - name: Get previous tag
