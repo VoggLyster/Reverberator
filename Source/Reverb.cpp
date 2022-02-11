@@ -65,50 +65,36 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     ready = true;
 }
 
-void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES], 
-    std::atomic<float>* cParameters[N_LINES], 
-    std::atomic<float>* filterCoeffParameters[N_LINES][5],
-    std::atomic<float>* delayLengthMaxParameter,
-    std::atomic<float>* delayLengthMinParameter,
-    std::atomic<float>* modFrequencyParameters[N_LINES]) {
-    
-    delayLengthMaxSamples = 2500 + int(2500 * *delayLengthMaxParameter);
-    delayLengthMinSamples = 100 + int(2400 * *delayLengthMinParameter);
-    std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
+void ReverbProcessor::setParameters(std::atomic<float>* filterCoeffParameters[N_LINES][5]) {
 
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = *bParameters[i];
-        c[i] = *cParameters[i];
 
         filters[i]->setParameters(*filterCoeffParameters[i][0], *filterCoeffParameters[i][1], *filterCoeffParameters[i][2], *filterCoeffParameters[i][3], *filterCoeffParameters[i][4]);
-        /*M[i] = delayLengths[i];*/
-        delayLengths[i] = delayLengths_[i];
-        delayLines[i]->setDelay(delayLengths[i]);
-        lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
     }
 }
 
 float ReverbProcessor::process(float input)
 {
     float output = 0.0f;
-    for (int i = 0; i < N_LINES; i++) {
-        s[i] = 0.0f;
-    }
+    //for (int i = 0; i < N_LINES; i++) {
+    //    s[i] = 0.0f;
+    //}
     if (ready) {
         for (int i = 0; i < N_LINES; i++) {
-            float fdelay = delayLengths[i] - lfos[i]->getValue() * modDepth[i];
-            tempOut[i] = delayLines[i]->popSample(0, fdelay, true);
-            delayLines[i]->pushSample(0, b[i] * input + s_prev[i]);
+            //float fdelay = delayLengths[i] - lfos[i]->getValue() * modDepth[i];
+            //tempOut[i] = delayLines[i]->popSample(0, fdelay, true);
+            //delayLines[i]->pushSample(0, b[i] * input + s_prev[i]);
+            tempOut[i] = input;
             tempOut[i] = filters[i]->process(tempOut[i]);
-            tempOut[i] *= c[i];
-            for (int j = 0; j < N_LINES; j++) {
-                s[j] += A(j, i) * tempOut[i];
-            }
+            //tempOut[i] *= c[i];
+            //for (int j = 0; j < N_LINES; j++) {
+            //    s[j] += A(j, i) * tempOut[i];
+            //}
             output += tempOut[i];
         }
-        for (int i = 0; i < N_LINES; i++) {
-            s_prev[i] = s[i];
-        }
+        //for (int i = 0; i < N_LINES; i++) {
+        //    s_prev[i] = s[i];
+        //}
     }
     return output;
 }
