@@ -1,7 +1,7 @@
 name: Build plugin
 on: 
   push:
-    branches: ['master']
+    branches: ['onlyfilter']
 jobs:
   Linux-Build:
     name: Linux build
