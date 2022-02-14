@@ -9,8 +9,9 @@ Following FDN architecture has been implemented as a VST3 plugin in JUCE
 ![FDN architecture diagram](./images/FDN.png)
 The plugin is configured for 16 delay lines and using state variable filters.
 
-All gain and filter parameters are exposed
-![FDN GUI](./images/pluginGUIFull.png)
+With scrollable UI:
+
+![FDN GUI](./images/GUI.png)
 
 ---
 ## Compiling the plugin
