@@ -231,12 +231,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
         for (int j = 0; j < N_EQ; j++) {
             name = "eq_" + String(i) + "_gain_" + String(j);
-            params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+            params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.4f));
         }
         name = "mod" + String(i) + "_freq";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.0f));
         name = "mod" + String(i) + "_depth";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.0f));
     }
 
 
