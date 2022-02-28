@@ -27,31 +27,13 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         mainComponent.addAndMakeVisible(cLabels[i]);
         mainComponent.addAndMakeVisible(cSliders[i]);
         cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));
-        name = "c_hp" + String(i);
-        coeffLabels[i][0].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(coeffLabels[i][0]);
-        mainComponent.addAndMakeVisible(coeffSliders[i][0]);
-        coeffAttachments[i][0].reset(new SliderAttachment(valueTreeState, name, coeffSliders[i][0]));
-        name = "c_bp" + String(i);
-        coeffLabels[i][1].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(coeffLabels[i][1]);
-        mainComponent.addAndMakeVisible(coeffSliders[i][1]);
-        coeffAttachments[i][1].reset(new SliderAttachment(valueTreeState, name, coeffSliders[i][1]));
-        name = "c_lp" + String(i);
-        coeffLabels[i][2].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(coeffLabels[i][2]);
-        mainComponent.addAndMakeVisible(coeffSliders[i][2]);
-        coeffAttachments[i][2].reset(new SliderAttachment(valueTreeState, name, coeffSliders[i][2]));
-        name = "R" + String(i);
-        coeffLabels[i][3].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(coeffLabels[i][3]);
-        mainComponent.addAndMakeVisible(coeffSliders[i][3]);
-        coeffAttachments[i][3].reset(new SliderAttachment(valueTreeState, name, coeffSliders[i][3]));
-        name = "g" + String(i);
-        coeffLabels[i][4].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(coeffLabels[i][4]);
-        mainComponent.addAndMakeVisible(coeffSliders[i][4]);
-        coeffAttachments[i][4].reset(new SliderAttachment(valueTreeState, name, coeffSliders[i][4]));
+        for (int j = 0; j < N_EQ; j++) {
+            name = "eq_" + String(i) + "_gain_" + String(j);
+            eqGainLabels[i][j].setText(name, juce::dontSendNotification);
+            mainComponent.addAndMakeVisible(eqGainLabels[i][j]);
+            mainComponent.addAndMakeVisible(eqGainSliders[i][j]);
+            eqGainAttachments[i][j].reset(new SliderAttachment(valueTreeState, name, eqGainSliders[i][j]));
+        }
         name = "mod" + String(i) + "_freq";
         modFreqLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(modFreqLabels[i]);
@@ -73,7 +55,7 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     mainComponent.addAndMakeVisible(delayMinLengthSlider);
     delayMinLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_min", delayMinLengthSlider));
 
-    setSize (400, 600);
+    setSize (400, 1200);
     scrollableView.setViewedComponent(&mainComponent, false);
     addAndMakeVisible(scrollableView);
     scrollableView.setScrollBarsShown(true, true);
@@ -121,9 +103,9 @@ void ReverberatorAudioProcessorEditor::resized()
         cLabels[i].setBounds(5, height, 100, size);
         cSliders[i].setBounds(105, height, 185, size);
         height += 25;
-        for (int j = 0; j < 5; j++) {
-            coeffLabels[i][j].setBounds(5, height, 100, size);
-            coeffSliders[i][j].setBounds(105, height, 185, size);
+        for (int j = 0; j < N_EQ; j++) {
+            eqGainLabels[i][j].setBounds(5, height, 100, size);
+            eqGainSliders[i][j].setBounds(105, height, 185, size);
             height += 25;
         }
         modFreqLabels[i].setBounds(5, height, 100, size);
