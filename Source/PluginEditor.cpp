@@ -39,6 +39,11 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         mainComponent.addAndMakeVisible(modFreqLabels[i]);
         mainComponent.addAndMakeVisible(modFreqSliders[i]);
         modFreqAttachments[i].reset(new SliderAttachment(valueTreeState, name, modFreqSliders[i]));
+        name = "mod" + String(i) + "_depth";
+        modDepthLabels[i].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(modDepthLabels[i]);
+        mainComponent.addAndMakeVisible(modDepthSliders[i]);
+        modDepthAttachments[i].reset(new SliderAttachment(valueTreeState, name, modDepthSliders[i]));
     }
 
     delayMaxLengthLabel.setText("delay_length_max", juce::dontSendNotification);
@@ -50,7 +55,7 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     mainComponent.addAndMakeVisible(delayMinLengthSlider);
     delayMinLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_min", delayMinLengthSlider));
 
-    setSize (400, 1000);
+    setSize (400, 1200);
     scrollableView.setViewedComponent(&mainComponent, false);
     addAndMakeVisible(scrollableView);
     scrollableView.setScrollBarsShown(true, true);
@@ -105,6 +110,9 @@ void ReverberatorAudioProcessorEditor::resized()
         }
         modFreqLabels[i].setBounds(5, height, 100, size);
         modFreqSliders[i].setBounds(105, height, 185, size);
+        height += 25;
+        modDepthLabels[i].setBounds(5, height, 100, size);
+        modDepthSliders[i].setBounds(105, height, 185, size);
         height += 25;
     }
     DBG(String(height));

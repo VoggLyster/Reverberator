@@ -55,6 +55,9 @@ private:
     Label modFreqLabels[N_LINES];
     Slider modFreqSliders[N_LINES];
     std::unique_ptr<SliderAttachment> modFreqAttachments[N_LINES];
+    Label modDepthLabels[N_LINES];
+    Slider modDepthSliders[N_LINES];
+    std::unique_ptr<SliderAttachment> modDepthAttachments[N_LINES];
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ReverberatorAudioProcessorEditor)
 };

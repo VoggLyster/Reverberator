@@ -71,7 +71,8 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::atomic<float>* eqGainParameters[N_LINES][N_EQ],
     std::atomic<float>* delayLengthMaxParameter,
     std::atomic<float>* delayLengthMinParameter,
-    std::atomic<float>* modFrequencyParameters[N_LINES]) {
+    std::atomic<float>* modFrequencyParameters[N_LINES],
+    std::atomic<float>* modDepthParameters[N_LINES]) {
     
     delayLengthMaxSamples = 2500 + int(5000 * *delayLengthMaxParameter);
     delayLengthMinSamples = 100 + int(2400 * *delayLengthMinParameter);
@@ -89,6 +90,7 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
         delayLengths[i] = delayLengths_[i];
         delayLines[i]->setDelay(delayLengths[i]);
         lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
+        modDepth[i] = *modDepthParameters[i] * 10.0f;
     }
 }
 
