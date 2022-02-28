@@ -78,7 +78,7 @@ void ReverberatorAudioProcessorEditor::paint (juce::Graphics& g)
 void ReverberatorAudioProcessorEditor::resized()
 {
     scrollableView.setBoundsRelative(0, 0, 1, 1);
-    int componentSize = 400 * N_LINES;
+    int componentSize = 425 * N_LINES;
     mainComponent.setBounds(0, 0, getWidth(), componentSize);
 
     int size = 20;

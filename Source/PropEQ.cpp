@@ -46,18 +46,7 @@ float PropEQ::process(float input)
         x0 = states[i].y0;
     }
 
-
-    //float output = 0.0f;
-
-    //for (int i = 0; i < N_EQ; i++) {
-    //    output += states[i].y0;
-    //}
-
     float output = g0 * states[N_EQ-1].y0;
-
-    if (input >= 1.0f) {
-        int test = 0;
-    }
 
     return output;
 }
@@ -97,10 +86,10 @@ void PropEQ::setPolesAndZeros()
 
     // Notch EQs
     for (int i = 1; i < N_EQ - 1; i++) {
-        float wc = freqToW(centerFreqs[i]);
-        float B = wc / Q;
-        float omega = tanf(B / 2.f);
-        float c = cosf(wc);
+        wc = freqToW(centerFreqs[i]);
+        B = wc / Q;
+        omega = tanf(B / 2.f);
+        c = cosf(wc);
         g2 = sqrtf(g[i]);
         coeffs[i].b0 = g2 + g[i] * omega;
         coeffs[i].b1 = -2 * g2 * c;

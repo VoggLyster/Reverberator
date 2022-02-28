@@ -39,7 +39,7 @@ private:
 
     // 0.25 < g < 4
     // All About Audio Equalization: Solutions and Frontiers, p.11
-    float g[N_EQ] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    float g[N_EQ] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
     float g2 = 0.0f;
     float g4 = 0.0f;
