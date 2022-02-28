@@ -35,21 +35,11 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         parameterName = "c" + juce::String(i) + "_gain";
         bParameters[i] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
-        parameterName = "c_hp" + juce::String(i);
-        filterCoeffParameters[i][0] = parameters.getRawParameterValue(parameterName);
-        parameters.addParameterListener(parameterName, this);
-        parameterName = "c_bp" + juce::String(i);
-        filterCoeffParameters[i][1] = parameters.getRawParameterValue(parameterName);
-        parameters.addParameterListener(parameterName, this);
-        parameterName = "c_lp" + juce::String(i);
-        filterCoeffParameters[i][2] = parameters.getRawParameterValue(parameterName);
-        parameters.addParameterListener(parameterName, this);
-        parameterName = "R" + juce::String(i);
-        filterCoeffParameters[i][3] = parameters.getRawParameterValue(parameterName);
-        parameters.addParameterListener(parameterName, this);
-        parameterName = "g" + juce::String(i);
-        filterCoeffParameters[i][4] = parameters.getRawParameterValue(parameterName);
-        parameters.addParameterListener(parameterName, this);
+        for (int j = 0; j < N_EQ; j++) {
+            parameterName = "eq_" + String(i) + "_gain_" + String(j);
+            eqGainParameters[i][j] = parameters.getRawParameterValue(parameterName);
+            parameters.addParameterListener(parameterName, this);
+        }
         parameterName = "mod" + juce::String(i) + "_freq";
         modFreqParameters[i] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
@@ -129,7 +119,7 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
+    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -221,7 +211,7 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    reverbProcessor->setParameters(bParameters, cParameters, filterCoeffParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
+    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::createParameterLayout()
@@ -236,16 +226,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
         name = "c" + String(i) + "_gain";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
-        name = "c_hp" + String(i);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
-        name = "c_bp" + String(i);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
-        name = "c_lp" + String(i);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
-        name = "R" + String(i);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
-        name = "g" + String(i);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        for (int j = 0; j < N_EQ; j++) {
+            name = "eq_" + String(i) + "_gain_" + String(j);
+            params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
+        }
         name = "mod" + String(i) + "_freq";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.5f));
     }

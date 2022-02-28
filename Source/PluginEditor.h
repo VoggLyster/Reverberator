@@ -17,14 +17,14 @@
 */
 typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
-class ReverberatorAudioProcessorEditor  : public juce::AudioProcessorEditor
+class ReverberatorAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-    ReverberatorAudioProcessorEditor (ReverberatorAudioProcessor&, AudioProcessorValueTreeState&);
+    ReverberatorAudioProcessorEditor(ReverberatorAudioProcessor&, AudioProcessorValueTreeState&);
     ~ReverberatorAudioProcessorEditor() override;
 
     //==============================================================================
-    void paint (juce::Graphics&) override;
+    void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
@@ -48,9 +48,9 @@ private:
     Label cLabels[N_LINES];
     Slider cSliders[N_LINES];
     std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
-    Label coeffLabels[N_LINES][5];
-    Slider coeffSliders[N_LINES][5];
-    std::unique_ptr<SliderAttachment> coeffAttachments[N_LINES][5];
+    Label eqGainLabels[N_LINES][N_EQ];
+    Slider eqGainSliders[N_LINES][N_EQ];
+    std::unique_ptr<SliderAttachment> eqGainAttachments[N_LINES][N_EQ];
 
     Label modFreqLabels[N_LINES];
     Slider modFreqSliders[N_LINES];

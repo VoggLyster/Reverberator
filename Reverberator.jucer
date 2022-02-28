@@ -17,6 +17,8 @@
       <FILE id="p6vgKu" name="Divider.h" compile="0" resource="0" file="Source/Divider.h"/>
       <FILE id="SMdqrA" name="LFO.cpp" compile="1" resource="0" file="Source/LFO.cpp"/>
       <FILE id="MTDFxo" name="LFO.h" compile="0" resource="0" file="Source/LFO.h"/>
+      <FILE id="sQXxLf" name="PropEQ.cpp" compile="1" resource="0" file="Source/PropEQ.cpp"/>
+      <FILE id="vj2re0" name="PropEQ.h" compile="0" resource="0" file="Source/PropEQ.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
