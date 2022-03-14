@@ -18,8 +18,8 @@ ReverbProcessor::ReverbProcessor()
         tempOut[i] = 0.0f;
         s[i] = 0.0f;
         s_prev[i] = 0.0f;
-        delayLengths[i] = 0;
-        modDepth[i] = 10;
+        delayLengths[i] = 1200;
+        modDepth[i] = 0;
     }
     const float* householder;
     switch (N_LINES)
