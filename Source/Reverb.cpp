@@ -85,7 +85,7 @@ void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
         //c[i] = *cParameters[i];
 
         for (int j = 0; j < N_EQ; j++) {
-            tempGain[j] = (*eqGainParameters[i][j] * 0.5) + 0.5;
+            tempGain[j] = (*eqGainParameters[i][j] * 0.25) + 0.75;
         }
 
         propEQs[i]->setGainVector(tempGain);
