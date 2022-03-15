@@ -12,13 +12,15 @@
 
 ReverbProcessor::ReverbProcessor()
 {
+    std::vector<int> delayLengths_ = generateCoprimeRange(3000, 1000);
+
     for (int i = 0; i < N_LINES; i++) {
         b[i] = 1.0f;
         c[i] = 1.0f;
         tempOut[i] = 0.0f;
         s[i] = 0.0f;
         s_prev[i] = 0.0f;
-        delayLengths[i] = 1200;
+        delayLengths[i] = delayLengths_[i];
         modDepth[i] = 0;
     }
     const float* householder;
