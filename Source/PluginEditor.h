@@ -42,11 +42,11 @@ private:
 
     Divider dividers[N_LINES];
 
-    //Label bLabels[N_LINES];
-    //Slider bSliders[N_LINES];
-    //std::unique_ptr<SliderAttachment> bAttachments[N_LINES];
-    //Label cLabels[N_LINES];
-    //Slider cSliders[N_LINES];
+    Label bLabels[N_LINES];
+    Slider bSliders[N_LINES];
+    std::unique_ptr<SliderAttachment> bAttachments[N_LINES];
+    Label cLabels[N_LINES];
+    Slider cSliders[N_LINES];
     std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
     Label eqGainLabels[N_LINES][N_EQ];
     Slider eqGainSliders[N_LINES][N_EQ];

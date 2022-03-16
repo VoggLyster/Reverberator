@@ -57,8 +57,8 @@ public:
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
-    void setParameters(/*std::atomic<float>* bParameters[N_LINES],
-        std::atomic<float>* cParameters[N_LINES],*/
+    void setParameters(std::atomic<float>* bParameters[N_LINES],
+        std::atomic<float>* cParameters[N_LINES],
         std::atomic<float>* eqGainParameters[N_LINES][N_EQ]/*,
         std::atomic<float>* delayLengthMaxParameter,
         std::atomic<float>* delayLengthMinParameter,

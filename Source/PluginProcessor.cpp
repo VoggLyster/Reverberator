@@ -29,12 +29,12 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
     delayLengthMinParameter = parameters.getRawParameterValue(parameterName);
     parameters.addParameterListener(parameterName, this);*/
     for (int i = 0; i < N_LINES; i++) {
-        //parameterName = "b" + juce::String(i) + "_gain";
-        //cParameters[i] = parameters.getRawParameterValue(parameterName);
-        //parameters.addParameterListener(parameterName, this);
-        //parameterName = "c" + juce::String(i) + "_gain";
-        //bParameters[i] = parameters.getRawParameterValue(parameterName);
-        //parameters.addParameterListener(parameterName, this);
+        parameterName = "b" + juce::String(i) + "_gain";
+        cParameters[i] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+        parameterName = "c" + juce::String(i) + "_gain";
+        bParameters[i] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
         for (int j = 0; j < N_EQ; j++) {
             parameterName = "eq_" + String(i) + "_gain_" + String(j);
             eqGainParameters[i][j] = parameters.getRawParameterValue(parameterName);
@@ -122,7 +122,7 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    reverbProcessor->setParameters(/*bParameters, cParameters,*/ eqGainParameters/*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
+    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters/*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -214,7 +214,7 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    reverbProcessor->setParameters(/*bParameters, cParameters,*/ eqGainParameters /*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
+    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters /*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::createParameterLayout()
@@ -225,10 +225,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
     //params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 1.0f, 0.5f)); //Min delay length = [100, 2500]
     juce::String name = "";
     for (int i = 0; i < N_LINES; i++) {
-        //name = "b" + String(i) + "_gain";
-        //params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
-        //name = "c" + String(i) + "_gain";
-        //params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
+        name = "b" + String(i) + "_gain";
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
+        name = "c" + String(i) + "_gain";
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
         for (int j = 0; j < N_EQ; j++) {
             name = "eq_" + String(i) + "_gain_" + String(j);
             params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.4f));

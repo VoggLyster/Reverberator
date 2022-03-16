@@ -17,7 +17,7 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     for (int i = 0; i < N_LINES; i++) 
     {
         mainComponent.addAndMakeVisible(dividers[i]);
-        /*name = "b" + String(i) + "_gain";
+        name = "b" + String(i) + "_gain";
         bLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(bLabels[i]);
         mainComponent.addAndMakeVisible(bSliders[i]);
@@ -26,7 +26,7 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         cLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(cLabels[i]);
         mainComponent.addAndMakeVisible(cSliders[i]);
-        cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));*/
+        cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));
         for (int j = 0; j < N_EQ; j++) {
             name = "eq_" + String(i) + "_gain_" + String(j);
             eqGainLabels[i][j].setText(name, juce::dontSendNotification);
@@ -97,12 +97,12 @@ void ReverberatorAudioProcessorEditor::resized()
         dividers[i].setBounds(5, height, 100, size);
         dividers[i].setBounds(105, height, 185, size);
         height += 25;
-        //bLabels[i].setBounds(5, height, 100, size);
-        //bSliders[i].setBounds(105, height, 185, size);
-        //height += 25;
-        //cLabels[i].setBounds(5, height, 100, size);
-        //cSliders[i].setBounds(105, height, 185, size);
-        //height += 25;
+        bLabels[i].setBounds(5, height, 100, size);
+        bSliders[i].setBounds(105, height, 185, size);
+        height += 25;
+        cLabels[i].setBounds(5, height, 100, size);
+        cSliders[i].setBounds(105, height, 185, size);
+        height += 25;
         for (int j = 0; j < N_EQ; j++) {
             eqGainLabels[i][j].setBounds(5, height, 100, size);
             eqGainSliders[i][j].setBounds(105, height, 185, size);
