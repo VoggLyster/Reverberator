@@ -17,11 +17,6 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     for (int i = 0; i < N_LINES; i++) 
     {
         mainComponent.addAndMakeVisible(dividers[i]);
-        name = "b" + String(i) + "_gain";
-        bLabels[i].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(bLabels[i]);
-        mainComponent.addAndMakeVisible(bSliders[i]);
-        bAttachments[i].reset(new SliderAttachment(valueTreeState, name, bSliders[i]));
         name = "c" + String(i) + "_gain";
         cLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(cLabels[i]);
@@ -96,9 +91,6 @@ void ReverberatorAudioProcessorEditor::resized()
     for (int i = 0; i < N_LINES; i++) {
         dividers[i].setBounds(5, height, 100, size);
         dividers[i].setBounds(105, height, 185, size);
-        height += 25;
-        bLabels[i].setBounds(5, height, 100, size);
-        bSliders[i].setBounds(105, height, 185, size);
         height += 25;
         cLabels[i].setBounds(5, height, 100, size);
         cSliders[i].setBounds(105, height, 185, size);
