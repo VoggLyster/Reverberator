@@ -81,8 +81,8 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     //std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
 
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = *bParameters[i];
-        c[i] = *cParameters[i];
+        b[i] = (*bParameters[i] * 0.25) + 0.75;
+        c[i] = (*cParameters[i] * 0.25) + 0.75;
 
         for (int j = 0; j < N_EQ; j++) {
             tempGain[j] = (*eqGainParameters[i][j] * 0.25) + 0.75;
