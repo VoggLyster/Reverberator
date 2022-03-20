@@ -85,13 +85,13 @@ void ReverberatorAudioProcessorEditor::resized()
     int height = 0;
     int c = 0;
 
-    //delayMaxLengthLabel.setBounds(5, height, 100, size);
-    //delayMaxLengthSlider.setBounds(105, height, 185, size);
-    //height += 25;
+    delayMaxLengthLabel.setBounds(5, height, 100, size);
+    delayMaxLengthSlider.setBounds(105, height, 185, size);
+    height += 25;
 
-    //delayMinLengthLabel.setBounds(5, height, 100, size);
-    //delayMinLengthSlider.setBounds(105, height, 185, size);
-    //height += 25;
+    delayMinLengthLabel.setBounds(5, height, 100, size);
+    delayMinLengthSlider.setBounds(105, height, 185, size);
+    height += 25;
 
     for (int i = 0; i < N_LINES; i++) {
         dividers[i].setBounds(5, height, 100, size);
