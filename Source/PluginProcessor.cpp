@@ -29,6 +29,9 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
     delayLengthMinParameter = parameters.getRawParameterValue(parameterName);
     parameters.addParameterListener(parameterName, this);*/
     for (int i = 0; i < N_LINES; i++) {
+        parameterName = "b" + juce::String(i) + "_gain";
+        bParameters[i] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
         parameterName = "c" + juce::String(i) + "_gain";
         cParameters[i] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
@@ -119,7 +122,7 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    reverbProcessor->setParameters(cParameters, eqGainParameters/*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
+    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters/*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -158,9 +161,6 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    /*stereo = (totalNumInputChannels > 1) ? true : false;*/
-    stereo = false;
-
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
@@ -170,15 +170,8 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto* rightChannelData = buffer.getWritePointer(1);
 
     for (int n = 0; n < buffer.getNumSamples(); n++) {
-        if (stereo) {
-            std::vector<float> output = reverbProcessor->processStereo({ leftChannelData[n], rightChannelData[n] });
-            leftChannelData[n] = output[0];
-            rightChannelData[n] = output[1];
-        }
-        else {
-            float output = reverbProcessor->process(leftChannelData[n]);
-            leftChannelData[n] = output;
-        }
+        float output = reverbProcessor->process(leftChannelData[n]);
+        leftChannelData[n] = output;
     }
 }
 
@@ -211,7 +204,7 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    reverbProcessor->setParameters(cParameters, eqGainParameters /*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
+    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters /*, delayLengthMaxParameter, delayLengthMinParameter, modFreqParameters, modDepthParameters*/);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::createParameterLayout()
@@ -222,6 +215,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
     //params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 1.0f, 0.5f)); //Min delay length = [100, 2500]
     juce::String name = "";
     for (int i = 0; i < N_LINES; i++) {
+        name = "b" + String(i) + "_gain";
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
         name = "c" + String(i) + "_gain";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
         for (int j = 0; j < N_EQ; j++) {

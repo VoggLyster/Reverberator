@@ -57,21 +57,21 @@ public:
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
-    void setParameters(std::atomic<float>* cParameters[N_LINES],
+    void setParameters(std::atomic<float>* bParameters[N_LINES],
+        std::atomic<float>* cParameters[N_LINES],
         std::atomic<float>* eqGainParameters[N_LINES][N_EQ]/*,
         std::atomic<float>* delayLengthMaxParameter,
         std::atomic<float>* delayLengthMinParameter,
         std::atomic<float>* modFrequencyParameters[N_LINES],
         std::atomic<float>* modDepthParameters[N_LINES]*/);
     float process(float input);
-    std::vector<float> processStereo(std::vector<float> input);
     std::vector<int> generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples);
     int gcd(int a, int b);
 
 private:
     double fs = 48000; // Assume 48000 as default
     bool ready = false;
-
+    float b[N_LINES];
     float c[N_LINES];
     float tempOut[N_LINES];
     int delayLengths[N_LINES];

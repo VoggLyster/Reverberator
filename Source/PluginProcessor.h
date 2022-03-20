@@ -60,6 +60,7 @@ public:
 
 private:
     AudioProcessorValueTreeState parameters;
+    std::atomic<float>* bParameters[N_LINES];
     std::atomic<float>* cParameters[N_LINES];
     std::atomic<float>* MParameters[N_LINES];
     std::atomic<float>* eqGainParameters[N_LINES][N_EQ];
