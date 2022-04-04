@@ -22,11 +22,11 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
     , parameters(*this, nullptr, Identifier("Reverberator"), createParameterLayout())
 {
     juce::String parameterName = "";
-    parameterName = "delay_length_max";
-    delayLengthMaxParameter = parameters.getRawParameterValue(parameterName);
-    parameters.addParameterListener(parameterName, this);
     parameterName = "delay_length_min";
     delayLengthMinParameter = parameters.getRawParameterValue(parameterName);
+    parameters.addParameterListener(parameterName, this);
+    parameterName = "delay_length_max";
+    delayLengthMaxParameter = parameters.getRawParameterValue(parameterName);
     parameters.addParameterListener(parameterName, this);
     for (int i = 0; i < N_LINES; i++) {
         parameterName = "b" + juce::String(i) + "_gain";
@@ -164,7 +164,6 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    DBG("input channels: " + String(totalNumInputChannels) + ", output channels: " + String(totalNumOutputChannels));
 
     auto* leftChannelData = buffer.getWritePointer(0);
     auto* rightChannelData = buffer.getWritePointer(1);
@@ -211,8 +210,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
 {
     juce::AudioProcessorValueTreeState::ParameterLayout params;
     
-    params.add(std::make_unique<AudioParameterFloat>("delay_length_max", "delay_length_max", 0.0f, 1.0f, 0.5f)); //Max delay length = [2500,5000]
     params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 1.0f, 0.5f)); //Min delay length = [100, 2500]
+    params.add(std::make_unique<AudioParameterFloat>("delay_length_max", "delay_length_max", 0.0f, 1.0f, 0.5f)); //Max delay length = [2500,5000]
     juce::String name = "";
     for (int i = 0; i < N_LINES; i++) {
         name = "b" + String(i) + "_gain";

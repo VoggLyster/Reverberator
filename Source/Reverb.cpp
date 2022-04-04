@@ -80,15 +80,16 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
 
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = (*cParameters[i] * 0.25) + 0.75;
-        c[i] = (*cParameters[i] * 0.25) + 0.75;
+        b[i] = (*cParameters[i] * 0.75) + 0.25;
+        c[i] = (*cParameters[i] * 0.75) + 0.25;
 
         for (int j = 0; j < N_EQ; j++) {
-            tempGain[j] = (*eqGainParameters[i][j] * 0.25) + 0.75;
+            tempGain[j] = (*eqGainParameters[i][j] * 0.99) + 0.01;
         }
 
         propEQs[i]->setGainVector(tempGain);
         delayLengths[i] = delayLengths_[i];
+        DBG(juce::String(delayLengths[i]));
         delayLines[i]->setDelay(delayLengths[i]);
         //lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
         //modDepth[i] = *modDepthParameters[i] * 10.0f;
@@ -105,7 +106,7 @@ float ReverbProcessor::process(float input)
         for (int i = 0; i < N_LINES; i++) {
             float fdelay = delayLengths[i] - lfos[i]->getValue() * modDepth[i];
             tempOut[i] = delayLines[i]->popSample(0, fdelay, true);
-            delayLines[i]->pushSample(0, input + s_prev[i]);
+            delayLines[i]->pushSample(0, b[i] * input + s_prev[i]);
             tempOut[i] = propEQs[i]->process(tempOut[i]);
             tempOut[i] *= c[i];
             for (int j = 0; j < N_LINES; j++) {
