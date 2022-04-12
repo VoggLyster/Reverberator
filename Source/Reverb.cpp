@@ -108,11 +108,10 @@ float ReverbProcessor::process(float input)
             tempOut[i] = delayLines[i]->popSample(0, fdelay, true);
             delayLines[i]->pushSample(0, b[i] * input + s_prev[i]);
             tempOut[i] = propEQs[i]->process(tempOut[i]);
-            tempOut[i] *= c[i];
             for (int j = 0; j < N_LINES; j++) {
                 s[j] += A(j, i) * tempOut[i];
             }
-            output += tempOut[i];
+            output += tempOut[i] * c[i];
         }
         for (int i = 0; i < N_LINES; i++) {
             s_prev[i] = s[i];
