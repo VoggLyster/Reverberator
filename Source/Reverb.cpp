@@ -75,8 +75,8 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::atomic<float>* modFrequencyParameters[N_LINES],
     std::atomic<float>* modDepthParameters[N_LINES]*/) {
     
-    delayLengthMaxSamples = 2500 + int(5000 * *delayLengthMaxParameter);
-    delayLengthMinSamples = 100 + int(2400 * *delayLengthMinParameter);
+    delayLengthMaxSamples = 1000 + int(5000 * *delayLengthMaxParameter);
+    delayLengthMinSamples = 100 + int(900 * *delayLengthMinParameter);
     std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
 
     for (int i = 0; i < N_LINES; i++) {

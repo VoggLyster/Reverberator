@@ -28,6 +28,8 @@
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="Reverberator" defines="N_LINES=4"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Reverberator"/>
+        <CONFIGURATION isDebug="0" name="Release_4ch" targetName="Reverberator" defines="N_LINES=4"/>
+        <CONFIGURATION isDebug="0" name="Release_16ch" targetName="Reverberator" defines="N_LINES=16"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="C:/Users/svkly/Documents/JUCE/modules"/>
