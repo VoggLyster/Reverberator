@@ -67,6 +67,7 @@ public:
     float process(float input);
     std::vector<int> generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples);
     int gcd(int a, int b);
+    std::vector<int> generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples);
 
 private:
     double fs = 48000; // Assume 48000 as default
@@ -74,10 +75,11 @@ private:
     float b[N_LINES];
     float c[N_LINES];
     float tempOut[N_LINES];
-    //int delayLengths[N_LINES];
-    int delayLengths[16] = {441,513,593,738,890,1135,1388,1689,2059,2446,2874,3388,3906,4466,5089,5755};
+    int delayLengths[N_LINES];
+    //int delayLengths[16] = {441,513,593,738,890,1135,1388,1689,2059,2446,2874,3388,3906,4466,5089,5755};
     int delayLengthMaxSamples;
     int delayLengthMinSamples;
+    int primes[16] = { 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53 };
     std::unique_ptr<juce::dsp::DelayLine<float>> delayLines[N_LINES];
     float s[N_LINES];
     float s_prev[N_LINES];

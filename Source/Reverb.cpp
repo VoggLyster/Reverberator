@@ -12,15 +12,16 @@
 
 ReverbProcessor::ReverbProcessor()
 {
-    //std::vector<int> delayLengths_ = generateCoprimeRange(3000, 1000);
+    //std::vector<int> delayLengths_ = generateCoprimeRange(750*(N_LINES/2), 480);
+    std::vector<int> delayLengths_ = generateDelayLineLengths(350 * (N_LINES / 2), 300);
 
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = 1.0f;
-        c[i] = 1.0f;
+        b[i] = 0.7f;
+        c[i] = 0.7f;
         tempOut[i] = 0.0f;
         s[i] = 0.0f;
         s_prev[i] = 0.0f;
-        //delayLengths[i] = delayLengths_[i];
+        delayLengths[i] = delayLengths_[i];
         modDepth[i] = 0;
     }
     const float* householder;
@@ -137,6 +138,7 @@ std::vector<int> ReverbProcessor::generateCoprimeRange(int delayLengthMaxSamples
                 }
             }
         }
+        DBG(juce::String(number));
         coprimeRange.push_back(number);
     }
 
@@ -148,6 +150,26 @@ int ReverbProcessor::gcd(int a, int b)
     if (b == 0)
         return a;
     return gcd(b, a % b);
+}
+
+std::vector<int> ReverbProcessor::generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples)
+{
+    // https://ccrma.stanford.edu/~jos/pasp/Prime_Power_Delay_Line_Lengths.html
+
+    int range = delayLengthMaxSamples - delayLengthMinSamples;
+    int rangeInterval = range / jmax((N_LINES - 1), 1);
+
+    std::vector<int> delayLengths = std::vector<int>();
+
+    for (int i = 0; i < N_LINES; i++) {
+        int Mi = delayLengthMinSamples + (i * rangeInterval);
+        int mi = juce::roundFloatToInt(logf(Mi) / logf(primes[i]));
+        Mi = pow(primes[i],mi);
+        DBG(juce::String(Mi));
+        delayLengths.push_back(Mi);
+    }
+
+    return delayLengths;
 }
 
 Biquad::Biquad() {}
