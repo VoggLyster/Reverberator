@@ -33,21 +33,21 @@ private:
     Viewport scrollableView;
     Component mainComponent;
 
-    Label delayMaxLengthLabel;
-    Slider delayMaxLengthSlider;
-    std::unique_ptr<SliderAttachment> delayMaxLengthAttachment;
-    Label delayMinLengthLabel;
-    Slider delayMinLengthSlider;
-    std::unique_ptr<SliderAttachment> delayMinLengthAttachment;
+    //Label delayMaxLengthLabel;
+    //Slider delayMaxLengthSlider;
+    //std::unique_ptr<SliderAttachment> delayMaxLengthAttachment;
+    //Label delayMinLengthLabel;
+    //Slider delayMinLengthSlider;
+    //std::unique_ptr<SliderAttachment> delayMinLengthAttachment;
 
     Divider dividers[N_LINES];
 
-    Label bLabels[N_LINES];
-    Slider bSliders[N_LINES];
-    std::unique_ptr<SliderAttachment> bAttachments[N_LINES];
-    Label cLabels[N_LINES];
-    Slider cSliders[N_LINES];
-    std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
+    //Label bLabels[N_LINES];
+    //Slider bSliders[N_LINES];
+    //std::unique_ptr<SliderAttachment> bAttachments[N_LINES];
+    //Label cLabels[N_LINES];
+    //Slider cSliders[N_LINES];
+    //std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
     Label eqGainLabels[N_LINES][N_EQ];
     Slider eqGainSliders[N_LINES][N_EQ];
     std::unique_ptr<SliderAttachment> eqGainAttachments[N_LINES][N_EQ];

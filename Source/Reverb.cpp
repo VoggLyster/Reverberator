@@ -12,14 +12,15 @@
 
 ReverbProcessor::ReverbProcessor()
 {
-    std::vector<int> delayLengths_ = generateCoprimeRange(3000, 1000);
+    //std::vector<int> delayLengths_ = generateCoprimeRange(3000, 1000);
 
     for (int i = 0; i < N_LINES; i++) {
+        b[i] = 1.0f;
         c[i] = 1.0f;
         tempOut[i] = 0.0f;
         s[i] = 0.0f;
         s_prev[i] = 0.0f;
-        delayLengths[i] = delayLengths_[i];
+        //delayLengths[i] = delayLengths_[i];
         modDepth[i] = 0;
     }
     const float* householder;
@@ -67,30 +68,30 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     ready = true;
 }
 
-void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
-    std::atomic<float>* cParameters[N_LINES],
-    std::atomic<float>* eqGainParameters[N_LINES][N_EQ],
+void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
+    std::atomic<float>* cParameters[N_LINES],*/
+    std::atomic<float>* eqGainParameters[N_LINES][N_EQ]/*,
     std::atomic<float>* delayLengthMaxParameter,
-    std::atomic<float>* delayLengthMinParameter/*,
+    std::atomic<float>* delayLengthMinParameter,
     std::atomic<float>* modFrequencyParameters[N_LINES],
     std::atomic<float>* modDepthParameters[N_LINES]*/) {
     
-    delayLengthMaxSamples = 1000 + int(5000 * *delayLengthMaxParameter);
-    delayLengthMinSamples = 100 + int(900 * *delayLengthMinParameter);
-    std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
+    //delayLengthMaxSamples = 1000 + int(5000 * *delayLengthMaxParameter);
+    //delayLengthMinSamples = 100 + int(900 * *delayLengthMinParameter);
+    //std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
 
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = (*cParameters[i] * 0.75) + 0.25;
-        c[i] = (*cParameters[i] * 0.75) + 0.25;
+        //b[i] = (*cParameters[i] * 0.75) + 0.25;
+        //c[i] = (*cParameters[i] * 0.75) + 0.25;
 
         for (int j = 0; j < N_EQ; j++) {
             tempGain[j] = (*eqGainParameters[i][j] * 0.99) + 0.01;
         }
 
         propEQs[i]->setGainVector(tempGain);
-        delayLengths[i] = delayLengths_[i];
-        DBG(juce::String(delayLengths[i]));
-        delayLines[i]->setDelay(delayLengths[i]);
+        //delayLengths[i] = delayLengths_[i];
+        //DBG(juce::String(delayLengths[i]));
+        //delayLines[i]->setDelay(delayLengths[i]);
         //lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
         //modDepth[i] = *modDepthParameters[i] * 10.0f;
     }
