@@ -171,7 +171,7 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int n = 0; n < buffer.getNumSamples(); n++) {
         float output = reverbProcessor->process(leftChannelData[n]);
         leftChannelData[n] = output;
-        rightChannelData[n] = output;
+        //rightChannelData[n] = output;
     }
 }
 
