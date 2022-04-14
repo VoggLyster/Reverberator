@@ -43,7 +43,8 @@ ReverbProcessor::ReverbProcessor()
     A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
     for (int i = 0; i < N_LINES; i++) {
         delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(6000);
-        propEQs[i] = std::make_unique<PropEQ>();
+        //propEQs[i] = std::make_unique<PropEQ>();
+        svfs[i] = std::make_unique<SVF>();
         lfos[i] = std::make_unique<LFO>();
         lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
     }
@@ -62,7 +63,7 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     procSpec.sampleRate = samplerate;
     for (int i = 0; i < N_LINES; i++) {
         delayLines[i]->prepare(procSpec);
-        propEQs[i]->prepare(fs);
+        //propEQs[i]->prepare(fs);
         lfos[i]->prepare(fs);
         lfos[i]->setFrequency(lfoFrequencies[i]);      
     }
@@ -85,11 +86,12 @@ void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
         //b[i] = (*cParameters[i] * 0.75) + 0.25;
         //c[i] = (*cParameters[i] * 0.75) + 0.25;
 
-        for (int j = 0; j < N_EQ; j++) {
-            tempGain[j] = (*eqGainParameters[i][j] * 0.99) + 0.01;
-        }
+        //for (int j = 0; j < N_EQ; j++) {
+        //    tempGain[j] = (*eqGainParameters[i][j] * 0.99) + 0.01;
+        //}
 
-        propEQs[i]->setGainVector(tempGain);
+        //propEQs[i]->setGainVector(tempGain);
+        svfs[i]->setParameters(*eqGainParameters[i][0], *eqGainParameters[i][1], *eqGainParameters[i][2], *eqGainParameters[i][3], *eqGainParameters[i][4]);
         //delayLengths[i] = delayLengths_[i];
         //DBG(juce::String(delayLengths[i]));
         //delayLines[i]->setDelay(delayLengths[i]);
@@ -109,7 +111,8 @@ float ReverbProcessor::process(float input)
             float fdelay = delayLengths[i] - lfos[i]->getValue() * modDepth[i];
             tempOut[i] = delayLines[i]->popSample(0, fdelay, true);
             delayLines[i]->pushSample(0, b[i] * input + s_prev[i]);
-            tempOut[i] = propEQs[i]->process(tempOut[i]);
+            //tempOut[i] = propEQs[i]->process(tempOut[i]);
+            tempOut[i] = svfs[i]->process(tempOut[i]);
             for (int j = 0; j < N_LINES; j++) {
                 s[j] += A(j, i) * tempOut[i];
             }

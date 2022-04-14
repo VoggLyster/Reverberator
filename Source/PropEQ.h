@@ -8,7 +8,7 @@
   ==============================================================================
 */
 #include <JuceHeader.h>
-#define N_EQ 10
+#define N_EQ 5
 
 class PropEQ
 {
@@ -27,7 +27,7 @@ private:
 
     // 0.25 < g < 4
     // All About Audio Equalization: Solutions and Frontiers, p.11
-    float g[N_EQ] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+    float g[10] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
     float Q = 1.f / sqrtf(2.f);
 
     juce::dsp::IIR::Filter<float> iir[N_EQ];
@@ -36,7 +36,7 @@ private:
     juce::dsp::IIR::Coefficients<float> coeffs[N_EQ];
     float tmpVal;
 
-    float centerFreqs[N_EQ] = { 31.5f ,63.f, 125.f, 250.f, 500.f, 1000.f, 2000.f, 3000.f, 8000.f, 16000.f };
+    float centerFreqs[10] = { 31.5f ,63.f, 125.f, 250.f, 500.f, 1000.f, 2000.f, 3000.f, 8000.f, 16000.f };
 };
 
 #pragma once
