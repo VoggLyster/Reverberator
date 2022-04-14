@@ -8,7 +8,7 @@
   ==============================================================================
 */
 #include <JuceHeader.h>
-#define N_EQ 5
+#define N_EQ 10
 
 class PropEQ
 {
