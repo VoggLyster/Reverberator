@@ -84,8 +84,7 @@ private:
     float s[N_LINES];
     float s_prev[N_LINES];
     juce::dsp::Matrix<float> A = juce::dsp::Matrix<float>(N_LINES, N_LINES);
-    //std::unique_ptr<PropEQ> propEQs[N_LINES];
-    std::unique_ptr<SVF> svfs[N_LINES];
+    std::unique_ptr<PropEQ> propEQs[N_LINES];
     float tempGain[N_EQ];
     std::unique_ptr<LFO> lfos[N_LINES];
     float lfoFrequencies[N_LINES];
