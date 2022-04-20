@@ -42,7 +42,7 @@ ReverbProcessor::ReverbProcessor()
     }
     A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
     for (int i = 0; i < N_LINES; i++) {
-        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(7000);
+        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(15000);
         propEQs[i] = std::make_unique<PropEQ>();
         lfos[i] = std::make_unique<LFO>();
         lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
@@ -61,9 +61,9 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     procSpec.numChannels = 2;
     procSpec.sampleRate = samplerate;
     int minDelayLength = int(0.01 * samplerate);
-    //int desiredModeDensity = int(0.15 * samplerate) - (30 * N_LINES);
-    //std::vector<int> delayLengths_ = generateDelayLineLengths(10*minDelayLength, minDelayLength);
-    std::vector<int> delayLengths_ = generateCoprimeRange(13 * minDelayLength, minDelayLength);
+    int desiredModeDensity = int(0.15 * samplerate) - (30 * N_LINES);
+    std::vector<int> delayLengths_ = generateDelayLineLengths(desiredModeDensity/1.5, minDelayLength);
+    //std::vector<int> delayLengths_ = generateCoprimeRange(13 * minDelayLength, minDelayLength);
     //int modeDensity = getModeDensity(delayLengths_);
     //jassert(modeDensity > desiredModeDensity);
     for (int i = 0; i < N_LINES; i++) {
@@ -170,8 +170,10 @@ std::vector<int> ReverbProcessor::generateDelayLineLengths(int delayLengthMaxSam
 
     for (int i = 0; i < N_LINES; i++) {
         int Mi = delayLengthMinSamples + (i * rangeInterval);
-        int mi = juce::roundFloatToInt(logf(Mi) / logf(primes[i]));
+        //int mi = juce::roundFloatToInt(logf(Mi) / logf(primes[i]));
+        int mi = 0.5 + (logf(Mi) / logf(primes[i]));
         Mi = pow(primes[i],mi);
+        DBG(juce::String(mi));
         DBG(juce::String(Mi));
         delayLengths.push_back(Mi);
     }
