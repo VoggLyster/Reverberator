@@ -50,13 +50,13 @@ float PropEQ::process(float input)
 void PropEQ::setPolesAndZeros()
 {
     if (isReady) {
-        iir[0].coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(samplerate, centerFreqs[0], Q, g[0]);
+        iir[0].coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(samplerate, centerFreqPartials[0]*samplerate, Q, g[0]);
 
         for (int i = 1; i < N_EQ - 1; i++) {
-            iir[i].coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(samplerate, centerFreqs[i], Q, g[i]);
+            iir[i].coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(samplerate, centerFreqPartials[i]*samplerate, Q, g[i]);
         }
 
-        iir[N_EQ - 1].coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(samplerate, centerFreqs[N_EQ - 1], Q, g[N_EQ - 1]);
+        iir[N_EQ - 1].coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(samplerate, centerFreqPartials[N_EQ - 1]*samplerate, Q, g[N_EQ - 1]);
     }
 }
 

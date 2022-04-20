@@ -13,7 +13,7 @@
 ReverbProcessor::ReverbProcessor()
 {
     //std::vector<int> delayLengths_ = generateCoprimeRange(750*(N_LINES/2), 480);
-    std::vector<int> delayLengths_ = generateDelayLineLengths(350 * (N_LINES / 2), 300);
+    
 
     for (int i = 0; i < N_LINES; i++) {
         b[i] = 0.7f;
@@ -21,7 +21,7 @@ ReverbProcessor::ReverbProcessor()
         tempOut[i] = 0.0f;
         s[i] = 0.0f;
         s_prev[i] = 0.0f;
-        delayLengths[i] = delayLengths_[i];
+        delayLengths[i] = 0;
         modDepth[i] = 0;
     }
     const float* householder;
@@ -42,7 +42,7 @@ ReverbProcessor::ReverbProcessor()
     }
     A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
     for (int i = 0; i < N_LINES; i++) {
-        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(6000);
+        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(7000);
         propEQs[i] = std::make_unique<PropEQ>();
         lfos[i] = std::make_unique<LFO>();
         lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
@@ -60,7 +60,14 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     procSpec.maximumBlockSize = samplesPerBlock;
     procSpec.numChannels = 2;
     procSpec.sampleRate = samplerate;
+    int minDelayLength = int(0.01 * samplerate);
+    //int desiredModeDensity = int(0.15 * samplerate) - (30 * N_LINES);
+    //std::vector<int> delayLengths_ = generateDelayLineLengths(10*minDelayLength, minDelayLength);
+    std::vector<int> delayLengths_ = generateCoprimeRange(13 * minDelayLength, minDelayLength);
+    //int modeDensity = getModeDensity(delayLengths_);
+    //jassert(modeDensity > desiredModeDensity);
     for (int i = 0; i < N_LINES; i++) {
+        delayLengths[i] = delayLengths_[i];
         delayLines[i]->prepare(procSpec);
         propEQs[i]->prepare(fs);
         lfos[i]->prepare(fs);
@@ -171,6 +178,20 @@ std::vector<int> ReverbProcessor::generateDelayLineLengths(int delayLengthMaxSam
 
     return delayLengths;
 }
+
+int ReverbProcessor::getModeDensity(std::vector<int> delayLengths) {
+    int modeDensity = 0;
+    for (auto& n : delayLengths)
+        modeDensity += n;
+    return modeDensity;
+}
+
+std::vector<int> ReverbProcessor::getDesiredDelayLengths(int maxSamples, int minSamples)
+{
+    // No, I dont know... 
+    return std::vector<int>();
+}
+
 
 Biquad::Biquad() {}
 

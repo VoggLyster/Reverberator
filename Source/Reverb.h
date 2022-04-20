@@ -68,6 +68,8 @@ public:
     std::vector<int> generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples);
     int gcd(int a, int b);
     std::vector<int> generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples);
+    int getModeDensity(std::vector<int> delayLengths);
+    std::vector<int> getDesiredDelayLengths(int maxSamples, int minSamples);
 
 private:
     double fs = 48000; // Assume 48000 as default
