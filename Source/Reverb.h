@@ -69,7 +69,7 @@ public:
     int gcd(int a, int b);
     std::vector<int> generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples);
     int getModeDensity(std::vector<int> delayLengths);
-    std::vector<int> getDesiredDelayLengths(int maxSamples, int minSamples);
+    std::vector<int> getPrimePowerDelays(float minPath, float maxPath);
 
 private:
     double fs = 48000; // Assume 48000 as default
@@ -82,6 +82,7 @@ private:
     int delayLengthMaxSamples;
     int delayLengthMinSamples;
     int primes[16] = { 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53 };
+    int c_ = 343; // Soundspeed in m/s at 20 degrees C for dry air
     std::unique_ptr<juce::dsp::DelayLine<float>> delayLines[N_LINES];
     float s[N_LINES];
     float s_prev[N_LINES];

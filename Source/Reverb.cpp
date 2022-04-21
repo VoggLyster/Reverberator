@@ -62,10 +62,11 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     procSpec.sampleRate = samplerate;
     int minDelayLength = int(0.01 * samplerate);
     int desiredModeDensity = int(0.15 * samplerate) - (30 * N_LINES);
-    std::vector<int> delayLengths_ = generateDelayLineLengths(desiredModeDensity/1.5, minDelayLength);
+    //std::vector<int> delayLengths_ = generateDelayLineLengths(desiredModeDensity/1.5, minDelayLength);
+    std::vector<int> delayLengths_ = getPrimePowerDelays(1.5, 40);
     //std::vector<int> delayLengths_ = generateCoprimeRange(13 * minDelayLength, minDelayLength);
-    //int modeDensity = getModeDensity(delayLengths_);
-    //jassert(modeDensity > desiredModeDensity);
+    int modeDensity = getModeDensity(delayLengths_);
+    jassert(modeDensity > desiredModeDensity);
     for (int i = 0; i < N_LINES; i++) {
         delayLengths[i] = delayLengths_[i];
         delayLines[i]->prepare(procSpec);
@@ -170,7 +171,6 @@ std::vector<int> ReverbProcessor::generateDelayLineLengths(int delayLengthMaxSam
 
     for (int i = 0; i < N_LINES; i++) {
         int Mi = delayLengthMinSamples + (i * rangeInterval);
-        //int mi = juce::roundFloatToInt(logf(Mi) / logf(primes[i]));
         int mi = 0.5 + (logf(Mi) / logf(primes[i]));
         Mi = pow(primes[i],mi);
         DBG(juce::String(mi));
@@ -188,10 +188,22 @@ int ReverbProcessor::getModeDensity(std::vector<int> delayLengths) {
     return modeDensity;
 }
 
-std::vector<int> ReverbProcessor::getDesiredDelayLengths(int maxSamples, int minSamples)
+std::vector<int> ReverbProcessor::getPrimePowerDelays(float minPath, float maxPath)
 {
-    // No, I dont know... 
-    return std::vector<int>();
+    // https://github.com/grame-cncm/faustlibraries/blob/master/delays.lib
+
+    std::vector<int> delayLengths = std::vector<int>();
+    int dmin = fs * minPath / c_;
+    int dmax = fs * maxPath / c_;
+    for (int i = 0; i < N_LINES; i++) {
+        int Mi = dmin * pow((dmax / dmin), (i / float(N_LINES - 1)));
+        int mi = floor(0.5 + log(Mi) / log(primes[i]));
+        Mi = pow(primes[i], mi);
+        DBG(juce::String(mi));
+        DBG(juce::String(Mi));
+        delayLengths.push_back(Mi);
+    }
+    return delayLengths;
 }
 
 
