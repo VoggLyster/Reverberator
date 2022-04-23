@@ -46,14 +46,14 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         modDepthAttachments[i].reset(new SliderAttachment(valueTreeState, name, modDepthSliders[i]));*/
     }
 
-    //delayMinLengthLabel.setText("delay_length_min", juce::dontSendNotification);
-    //mainComponent.addAndMakeVisible(delayMinLengthLabel);
-    //mainComponent.addAndMakeVisible(delayMinLengthSlider);
-    //delayMinLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_min", delayMinLengthSlider));
-    //delayMaxLengthLabel.setText("delay_length_max", juce::dontSendNotification);
-    //mainComponent.addAndMakeVisible(delayMaxLengthLabel);
-    //mainComponent.addAndMakeVisible(delayMaxLengthSlider);
-    //delayMaxLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_max", delayMaxLengthSlider));
+    delayMinLengthLabel.setText("delay_length_min", juce::dontSendNotification);
+    mainComponent.addAndMakeVisible(delayMinLengthLabel);
+    mainComponent.addAndMakeVisible(delayMinLengthSlider);
+    delayMinLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_min", delayMinLengthSlider));
+    delayMaxLengthLabel.setText("delay_length_max", juce::dontSendNotification);
+    mainComponent.addAndMakeVisible(delayMaxLengthLabel);
+    mainComponent.addAndMakeVisible(delayMaxLengthSlider);
+    delayMaxLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_max", delayMaxLengthSlider));
 
     setSize (400, 1200);
     scrollableView.setViewedComponent(&mainComponent, false);
@@ -85,13 +85,13 @@ void ReverberatorAudioProcessorEditor::resized()
     int height = 0;
     int c = 0;
 
-    //delayMinLengthLabel.setBounds(5, height, 100, size);
-    //delayMinLengthSlider.setBounds(105, height, 185, size);
-    //height += 25;
+    delayMinLengthLabel.setBounds(5, height, 100, size);
+    delayMinLengthSlider.setBounds(105, height, 185, size);
+    height += 25;
 
-    //delayMaxLengthLabel.setBounds(5, height, 100, size);
-    //delayMaxLengthSlider.setBounds(105, height, 185, size);
-    //height += 25;
+    delayMaxLengthLabel.setBounds(5, height, 100, size);
+    delayMaxLengthSlider.setBounds(105, height, 185, size);
+    height += 25;
 
     for (int i = 0; i < N_LINES; i++) {
         dividers[i].setBounds(5, height, 100, size);

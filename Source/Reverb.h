@@ -59,9 +59,9 @@ public:
     void prepare(double samplerate, int samplesPerBlock);
     void setParameters(/*std::atomic<float>* bParameters[N_LINES],
         std::atomic<float>* cParameters[N_LINES],*/
-        std::atomic<float>* eqGainParameters[N_LINES][N_EQ]/*,
+        std::atomic<float>* eqGainParameters[N_LINES][N_EQ],
         std::atomic<float>* delayLengthMaxParameter,
-        std::atomic<float>* delayLengthMinParameter,
+        std::atomic<float>* delayLengthMinParameter/*,
         std::atomic<float>* modFrequencyParameters[N_LINES],
         std::atomic<float>* modDepthParameters[N_LINES]*/);
     float process(float input);
@@ -79,8 +79,8 @@ private:
     float tempOut[N_LINES];
     int delayLengths[N_LINES];
     //int delayLengths[16] = {441,513,593,738,890,1135,1388,1689,2059,2446,2874,3388,3906,4466,5089,5755};
-    int delayLengthMaxSamples;
-    int delayLengthMinSamples;
+    int delayLengthMax;
+    int delayLengthMin;
     int primes[16] = { 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53 };
     int c_ = 343; // Soundspeed in m/s at 20 degrees C for dry air
     std::unique_ptr<juce::dsp::DelayLine<float>> delayLines[N_LINES];
@@ -92,6 +92,7 @@ private:
     std::unique_ptr<LFO> lfos[N_LINES];
     float lfoFrequencies[N_LINES];
     float modDepth[N_LINES];
+    int maxDelayLineLength = 20000;
 
     float predelayMaxLengthMs = 100;
 

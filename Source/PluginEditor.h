@@ -33,12 +33,12 @@ private:
     Viewport scrollableView;
     Component mainComponent;
 
-    //Label delayMaxLengthLabel;
-    //Slider delayMaxLengthSlider;
-    //std::unique_ptr<SliderAttachment> delayMaxLengthAttachment;
-    //Label delayMinLengthLabel;
-    //Slider delayMinLengthSlider;
-    //std::unique_ptr<SliderAttachment> delayMinLengthAttachment;
+    Label delayMaxLengthLabel;
+    Slider delayMaxLengthSlider;
+    std::unique_ptr<SliderAttachment> delayMaxLengthAttachment;
+    Label delayMinLengthLabel;
+    Slider delayMinLengthSlider;
+    std::unique_ptr<SliderAttachment> delayMinLengthAttachment;
 
     Divider dividers[N_LINES];
 
