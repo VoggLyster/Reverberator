@@ -87,8 +87,8 @@ void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
     
     //delayLengthMaxSamples = 1000 + int(5000 * *delayLengthMaxParameter);
     //delayLengthMinSamples = 100 + int(900 * *delayLengthMinParameter);
-    delayLengthMin = 1.0f + 30.0f * *delayLengthMinParameter;
-    delayLengthMax = delayLengthMin + 10.0f + 30.0f * *delayLengthMaxParameter;
+    delayLengthMin = 1.0f + 10.0f * *delayLengthMinParameter;
+    delayLengthMax = delayLengthMin + 5.0f + 20.0f * *delayLengthMaxParameter;
     //std::vector<int> delayLengths_ = generateCoprimeRange(delayLengthMaxSamples, delayLengthMinSamples);
     std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);
 
