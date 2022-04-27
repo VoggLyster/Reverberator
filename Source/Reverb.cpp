@@ -197,6 +197,10 @@ std::vector<int> ReverbProcessor::getPrimePowerDelays(float minPath, float maxPa
 
     std::vector<int> delayLengths = std::vector<int>();
     int dmin = fs * minPath / c_;
+    if (N_LINES == 1) {
+        delayLengths.push_back(dmin);
+        return delayLengths;
+    }
     int dmax = fs * maxPath / c_;
     for (int i = 0; i < N_LINES; i++) {
         int Mi = dmin * pow((dmax / dmin), (i / float(N_LINES - 1)));
