@@ -97,7 +97,7 @@ private:
 
     std::unique_ptr<juce::dsp::DelayLine<float>> predelayLine;
     int predelayLength;
-    float predelayMaxLengthMs = 150;
+    float predelayMaxLengthMs = 40;
 
     float householder16[256] =
     { 0.25, -0.25,	-0.25,	-0.25,	-0.25,	 0.25,	 0.25,	 0.25,	-0.25,  0.25,	 0.25,	 0.25,	-0.25,  0.25,	 0.25,	 0.25,
