@@ -39,6 +39,9 @@ private:
     Label delayMinLengthLabel;
     Slider delayMinLengthSlider;
     std::unique_ptr<SliderAttachment> delayMinLengthAttachment;
+    Label predelayLengthLabel;
+    Slider predelayLengthSlider;
+    std::unique_ptr<SliderAttachment> predelayLengthAttachment;
 
     Divider dividers[N_LINES];
 

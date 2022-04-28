@@ -61,7 +61,8 @@ public:
         std::atomic<float>* cParameters[N_LINES],*/
         std::atomic<float>* eqGainParameters[N_LINES][N_EQ],
         std::atomic<float>* delayLengthMaxParameter,
-        std::atomic<float>* delayLengthMinParameter/*,
+        std::atomic<float>* delayLengthMinParameter,
+        std::atomic<float>* predelayLengthParameter/*,
         std::atomic<float>* modFrequencyParameters[N_LINES],
         std::atomic<float>* modDepthParameters[N_LINES]*/);
     float process(float input);
@@ -94,7 +95,9 @@ private:
     float modDepth[N_LINES];
     int maxDelayLineLength = 20000;
 
-    float predelayMaxLengthMs = 100;
+    std::unique_ptr<juce::dsp::DelayLine<float>> predelayLine;
+    int predelayLength;
+    float predelayMaxLengthMs = 150;
 
     float householder16[256] =
     { 0.25, -0.25,	-0.25,	-0.25,	-0.25,	 0.25,	 0.25,	 0.25,	-0.25,  0.25,	 0.25,	 0.25,	-0.25,  0.25,	 0.25,	 0.25,

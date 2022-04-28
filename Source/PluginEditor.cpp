@@ -54,6 +54,10 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     mainComponent.addAndMakeVisible(delayMaxLengthLabel);
     mainComponent.addAndMakeVisible(delayMaxLengthSlider);
     delayMaxLengthAttachment.reset(new SliderAttachment(valueTreeState, "delay_length_max", delayMaxLengthSlider));
+    predelayLengthLabel.setText("predelay_length", juce::dontSendNotification);
+    mainComponent.addAndMakeVisible(predelayLengthLabel);
+    mainComponent.addAndMakeVisible(predelayLengthSlider);
+    predelayLengthAttachment.reset(new SliderAttachment(valueTreeState, "predelay_length", predelayLengthSlider));
 
     setSize (400, 1200);
     scrollableView.setViewedComponent(&mainComponent, false);
@@ -91,6 +95,10 @@ void ReverberatorAudioProcessorEditor::resized()
 
     delayMaxLengthLabel.setBounds(5, height, 100, size);
     delayMaxLengthSlider.setBounds(105, height, 185, size);
+    height += 25;
+
+    predelayLengthLabel.setBounds(5, height, 100, size);
+    predelayLengthSlider.setBounds(105, height, 185, size);
     height += 25;
 
     for (int i = 0; i < N_LINES; i++) {
