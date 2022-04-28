@@ -27,13 +27,6 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         mainComponent.addAndMakeVisible(cLabels[i]);
         mainComponent.addAndMakeVisible(cSliders[i]);
         cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));
-        for (int j = 0; j < N_EQ; j++) {
-            name = "eq_" + String(i) + "_gain_" + String(j);
-            eqGainLabels[i][j].setText(name, juce::dontSendNotification);
-            mainComponent.addAndMakeVisible(eqGainLabels[i][j]);
-            mainComponent.addAndMakeVisible(eqGainSliders[i][j]);
-            eqGainAttachments[i][j].reset(new SliderAttachment(valueTreeState, name, eqGainSliders[i][j]));
-        }
         name = "mod" + String(i) + "_freq";
         modFreqLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(modFreqLabels[i]);
@@ -58,6 +51,14 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     mainComponent.addAndMakeVisible(predelayLengthLabel);
     mainComponent.addAndMakeVisible(predelayLengthSlider);
     predelayLengthAttachment.reset(new SliderAttachment(valueTreeState, "predelay_length", predelayLengthSlider));
+
+    for (int j = 0; j < N_EQ; j++) {
+        name = "eq_gain_" + String(j);
+        eqGainLabels[j].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(eqGainLabels[j]);
+        mainComponent.addAndMakeVisible(eqGainSliders[j]);
+        eqGainAttachments[j].reset(new SliderAttachment(valueTreeState, name, eqGainSliders[j]));
+    }
 
     setSize (400, 1200);
     scrollableView.setViewedComponent(&mainComponent, false);
@@ -101,6 +102,12 @@ void ReverberatorAudioProcessorEditor::resized()
     predelayLengthSlider.setBounds(105, height, 185, size);
     height += 25;
 
+    for (int j = 0; j < N_EQ; j++) {
+        eqGainLabels[j].setBounds(5, height, 100, size);
+        eqGainSliders[j].setBounds(105, height, 185, size);
+        height += 25;
+    }
+
     for (int i = 0; i < N_LINES; i++) {
         dividers[i].setBounds(5, height, 100, size);
         dividers[i].setBounds(105, height, 185, size);
@@ -111,11 +118,6 @@ void ReverberatorAudioProcessorEditor::resized()
         cLabels[i].setBounds(5, height, 100, size);
         cSliders[i].setBounds(105, height, 185, size);
         height += 25;
-        for (int j = 0; j < N_EQ; j++) {
-            eqGainLabels[i][j].setBounds(5, height, 100, size);
-            eqGainSliders[i][j].setBounds(105, height, 185, size);
-            height += 25;
-        }
         modFreqLabels[i].setBounds(5, height, 100, size);
         modFreqSliders[i].setBounds(105, height, 185, size);
         height += 25;

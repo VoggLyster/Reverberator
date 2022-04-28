@@ -77,7 +77,7 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 
 void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::atomic<float>* cParameters[N_LINES],
-    std::atomic<float>* eqGainParameters[N_LINES][N_EQ],
+    std::atomic<float>* eqGainParameters[N_EQ],
     std::atomic<float>* delayLengthMaxParameter,
     std::atomic<float>* delayLengthMinParameter,
     std::atomic<float>* predelayLengthParameter,
@@ -91,13 +91,13 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     predelayLength = floor(*predelayLengthParameter * (fs/1000 * predelayMaxLengthMs));
     predelayLine->setDelay(predelayLength);
 
-    for (int i = 0; i < N_LINES; i++) {
-        b[i] = (*cParameters[i] * 0.75) + 0.25;
-        c[i] = (*cParameters[i] * 0.75) + 0.25;
+    for (int j = 0; j < N_EQ; j++) {
+        tempGain[j] = (*eqGainParameters[j] * 0.99) + 0.01;
+    }
 
-        for (int j = 0; j < N_EQ; j++) {
-            tempGain[j] = (*eqGainParameters[i][j] * 0.99) + 0.01;
-        }
+    for (int i = 0; i < N_LINES; i++) {
+        b[i] = (*cParameters[i] * 0.5) + 0.5;
+        c[i] = (*cParameters[i] * 0.5) + 0.5;
 
         propEQs[i]->setGainVector(tempGain);
         delayLengths[i] = delayLengths_[i];

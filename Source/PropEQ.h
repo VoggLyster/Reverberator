@@ -29,7 +29,7 @@ private:
     // All About Audio Equalization: Solutions and Frontiers, p.11
     float g[N_EQ] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
     //float Q = 1.f / sqrtf(2.f);
-    float Q = 1.0f;
+    float Q = 1.2f;
 
     juce::dsp::IIR::Filter<float> iir[N_EQ];
 

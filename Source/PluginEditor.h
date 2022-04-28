@@ -51,9 +51,9 @@ private:
     Label cLabels[N_LINES];
     Slider cSliders[N_LINES];
     std::unique_ptr<SliderAttachment> cAttachments[N_LINES];
-    Label eqGainLabels[N_LINES][N_EQ];
-    Slider eqGainSliders[N_LINES][N_EQ];
-    std::unique_ptr<SliderAttachment> eqGainAttachments[N_LINES][N_EQ];
+    Label eqGainLabels[N_EQ];
+    Slider eqGainSliders[N_EQ];
+    std::unique_ptr<SliderAttachment> eqGainAttachments[N_EQ];
 
     Label modFreqLabels[N_LINES];
     Slider modFreqSliders[N_LINES];
