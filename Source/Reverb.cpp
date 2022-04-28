@@ -12,9 +12,6 @@
 
 ReverbProcessor::ReverbProcessor()
 {
-    //std::vector<int> delayLengths_ = generateCoprimeRange(750*(N_LINES/2), 480);
-    
-
     for (int i = 0; i < N_LINES; i++) {
         b[i] = 0.7f;
         c[i] = 0.7f;
@@ -78,14 +75,14 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     ready = true;
 }
 
-void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
-    std::atomic<float>* cParameters[N_LINES],*/
+void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
+    std::atomic<float>* cParameters[N_LINES],
     std::atomic<float>* eqGainParameters[N_LINES][N_EQ],
     std::atomic<float>* delayLengthMaxParameter,
     std::atomic<float>* delayLengthMinParameter,
-    std::atomic<float>* predelayLengthParameter/*,
+    std::atomic<float>* predelayLengthParameter,
     std::atomic<float>* modFrequencyParameters[N_LINES],
-    std::atomic<float>* modDepthParameters[N_LINES]*/) {
+    std::atomic<float>* modDepthParameters[N_LINES]) {
     
     delayLengthMin = 1.0f + 10.0f * *delayLengthMinParameter;
     delayLengthMax = delayLengthMin + 10.0f + 20.0f * *delayLengthMaxParameter;
@@ -95,8 +92,8 @@ void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
     predelayLine->setDelay(predelayLength);
 
     for (int i = 0; i < N_LINES; i++) {
-        //b[i] = (*cParameters[i] * 0.75) + 0.25;
-        //c[i] = (*cParameters[i] * 0.75) + 0.25;
+        b[i] = (*cParameters[i] * 0.75) + 0.25;
+        c[i] = (*cParameters[i] * 0.75) + 0.25;
 
         for (int j = 0; j < N_EQ; j++) {
             tempGain[j] = (*eqGainParameters[i][j] * 0.99) + 0.01;
@@ -106,8 +103,8 @@ void ReverbProcessor::setParameters(/*std::atomic<float>* bParameters[N_LINES],
         delayLengths[i] = delayLengths_[i];
         DBG(juce::String(delayLengths[i]));
         delayLines[i]->setDelay(delayLengths[i]);
-        //lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
-        //modDepth[i] = *modDepthParameters[i] * 10.0f;
+        lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
+        modDepth[i] = *modDepthParameters[i] * 10.0f;
     }
 }
 

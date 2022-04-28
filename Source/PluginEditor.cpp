@@ -17,16 +17,16 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     for (int i = 0; i < N_LINES; i++) 
     {
         mainComponent.addAndMakeVisible(dividers[i]);
-        //name = "b" + String(i) + "_gain";
-        //bLabels[i].setText(name, juce::dontSendNotification);
-        //mainComponent.addAndMakeVisible(bLabels[i]);
-        //mainComponent.addAndMakeVisible(bSliders[i]);
-        //bAttachments[i].reset(new SliderAttachment(valueTreeState, name, bSliders[i]));
-        //name = "c" + String(i) + "_gain";
-        //cLabels[i].setText(name, juce::dontSendNotification);
-        //mainComponent.addAndMakeVisible(cLabels[i]);
-        //mainComponent.addAndMakeVisible(cSliders[i]);
-        //cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));
+        name = "b" + String(i) + "_gain";
+        bLabels[i].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(bLabels[i]);
+        mainComponent.addAndMakeVisible(bSliders[i]);
+        bAttachments[i].reset(new SliderAttachment(valueTreeState, name, bSliders[i]));
+        name = "c" + String(i) + "_gain";
+        cLabels[i].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(cLabels[i]);
+        mainComponent.addAndMakeVisible(cSliders[i]);
+        cAttachments[i].reset(new SliderAttachment(valueTreeState, name, cSliders[i]));
         for (int j = 0; j < N_EQ; j++) {
             name = "eq_" + String(i) + "_gain_" + String(j);
             eqGainLabels[i][j].setText(name, juce::dontSendNotification);
@@ -34,7 +34,7 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
             mainComponent.addAndMakeVisible(eqGainSliders[i][j]);
             eqGainAttachments[i][j].reset(new SliderAttachment(valueTreeState, name, eqGainSliders[i][j]));
         }
-        /*name = "mod" + String(i) + "_freq";
+        name = "mod" + String(i) + "_freq";
         modFreqLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(modFreqLabels[i]);
         mainComponent.addAndMakeVisible(modFreqSliders[i]);
@@ -43,7 +43,7 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
         modDepthLabels[i].setText(name, juce::dontSendNotification);
         mainComponent.addAndMakeVisible(modDepthLabels[i]);
         mainComponent.addAndMakeVisible(modDepthSliders[i]);
-        modDepthAttachments[i].reset(new SliderAttachment(valueTreeState, name, modDepthSliders[i]));*/
+        modDepthAttachments[i].reset(new SliderAttachment(valueTreeState, name, modDepthSliders[i]));
     }
 
     delayMinLengthLabel.setText("delay_length_min", juce::dontSendNotification);
@@ -105,23 +105,23 @@ void ReverberatorAudioProcessorEditor::resized()
         dividers[i].setBounds(5, height, 100, size);
         dividers[i].setBounds(105, height, 185, size);
         height += 25;
-        //bLabels[i].setBounds(5, height, 100, size);
-        //bSliders[i].setBounds(105, height, 185, size);
-        //height += 25;
-        //cLabels[i].setBounds(5, height, 100, size);
-        //cSliders[i].setBounds(105, height, 185, size);
-        //height += 25;
+        bLabels[i].setBounds(5, height, 100, size);
+        bSliders[i].setBounds(105, height, 185, size);
+        height += 25;
+        cLabels[i].setBounds(5, height, 100, size);
+        cSliders[i].setBounds(105, height, 185, size);
+        height += 25;
         for (int j = 0; j < N_EQ; j++) {
             eqGainLabels[i][j].setBounds(5, height, 100, size);
             eqGainSliders[i][j].setBounds(105, height, 185, size);
             height += 25;
         }
-        //modFreqLabels[i].setBounds(5, height, 100, size);
-        //modFreqSliders[i].setBounds(105, height, 185, size);
-        //height += 25;
-        //modDepthLabels[i].setBounds(5, height, 100, size);
-        //modDepthSliders[i].setBounds(105, height, 185, size);
-        //height += 25;
+        modFreqLabels[i].setBounds(5, height, 100, size);
+        modFreqSliders[i].setBounds(105, height, 185, size);
+        height += 25;
+        modDepthLabels[i].setBounds(5, height, 100, size);
+        modDepthSliders[i].setBounds(105, height, 185, size);
+        height += 25;
     }
     DBG(String(height));
 }
