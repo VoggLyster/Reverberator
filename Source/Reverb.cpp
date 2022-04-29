@@ -13,8 +13,8 @@
 ReverbProcessor::ReverbProcessor()
 {
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = 0.7f;
-        c[i] = 0.7f;
+        b[i] = 0.0f;
+        c[i] = 0.0f;
         tempOut[i] = 0.0f;
         s[i] = 0.0f;
         s_prev[i] = 0.0f;
@@ -84,27 +84,27 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::atomic<float>* modFrequencyParameters[N_LINES],
     std::atomic<float>* modDepthParameters[N_LINES]) {
     
-    delayLengthMin = 1.0f + 10.0f * *delayLengthMinParameter;
-    delayLengthMax = delayLengthMin + 10.0f + 20.0f * *delayLengthMaxParameter;
+    delayLengthMin = 10.0f + 0.1f * *delayLengthMinParameter;
+    delayLengthMax = delayLengthMin + 10.0f + 0.2f * *delayLengthMaxParameter;
     std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);
 
-    predelayLength = floor(*predelayLengthParameter * (fs/1000 * predelayMaxLengthMs));
+    predelayLength = floor(*predelayLengthParameter/100.f * (fs/1000 * predelayMaxLengthMs));
     predelayLine->setDelay(predelayLength);
 
     for (int j = 0; j < N_EQ; j++) {
-        tempGain[j] = (*eqGainParameters[j] * 0.99) + 0.01;
+        tempGain[j] = (*eqGainParameters[j]/100.f * 29.0) - 30.0;
     }
 
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = (*cParameters[i] * 0.5) + 0.5;
-        c[i] = (*cParameters[i] * 0.5) + 0.5;
+        b[i] = pow(10, (*bParameters[i] / 100.f * 12.f - 12.f) / 20.0);
+        c[i] = pow(10, (*cParameters[i] / 100.f * 12.f - 12.f) / 20.0);
 
         propEQs[i]->setGainVector(tempGain);
         delayLengths[i] = delayLengths_[i];
         DBG(juce::String(delayLengths[i]));
         delayLines[i]->setDelay(delayLengths[i]);
-        lfos[i]->setFrequency(*modFrequencyParameters[i] * 3.0f);
-        modDepth[i] = *modDepthParameters[i] * 10.0f;
+        lfos[i]->setFrequency(*modFrequencyParameters[i] * 0.03f);
+        modDepth[i] = *modDepthParameters[i] * 0.1f;
     }
 }
 

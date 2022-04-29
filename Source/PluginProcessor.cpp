@@ -217,24 +217,24 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
 {
     juce::AudioProcessorValueTreeState::ParameterLayout params;
     
-    params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 1.0f, 0.5f));
-    params.add(std::make_unique<AudioParameterFloat>("delay_length_max", "delay_length_max", 0.0f, 1.0f, 0.5f));
-    params.add(std::make_unique<AudioParameterFloat>("predelay_length", "predelay_length", 0.0f, 1.0f, 0.2f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 100.0f, 50.0f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_length_max", "delay_length_max", 0.0f, 100.0f, 50.0f));
+    params.add(std::make_unique<AudioParameterFloat>("predelay_length", "predelay_length", 0.0f, 100.0f, 20.0f));
     juce::String name = "";
     for (int j = 0; j < N_EQ; j++) {
         name = "eq_gain_" + String(j);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.4f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 90.0f));
     }
 
     for (int i = 0; i < N_LINES; i++) {
         name = "b" + String(i) + "_gain";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 90.0f));
         name = "c" + String(i) + "_gain";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.9f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 90.0f));
         name = "mod" + String(i) + "_freq";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 0.0f));
         name = "mod" + String(i) + "_depth";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 1.0f, 0.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 0.0f));
     }
 
 
