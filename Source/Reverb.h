@@ -71,6 +71,7 @@ public:
     std::vector<int> generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples);
     int getModeDensity(std::vector<int> delayLengths);
     std::vector<int> getPrimePowerDelays(float minPath, float maxPath);
+    std::vector<double> RTtoGain(std::vector<float> RT, int idx);
 
 private:
     double fs = 48000; // Assume 48000 as default
@@ -89,7 +90,7 @@ private:
     float s_prev[N_LINES];
     juce::dsp::Matrix<float> A = juce::dsp::Matrix<float>(N_LINES, N_LINES);
     std::unique_ptr<PropEQ> propEQs[N_LINES];
-    float tempGain[N_EQ];
+    std::vector<float> tempGain;
     std::unique_ptr<LFO> lfos[N_LINES];
     float lfoFrequencies[N_LINES];
     float modDepth[N_LINES];

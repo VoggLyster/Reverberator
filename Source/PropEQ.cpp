@@ -46,11 +46,9 @@ void PropEQ::prepare(double _samplerate) {
     isReady = true;
 }
 
-void PropEQ::setGainVector(float gainVector[N_EQ])
+void PropEQ::setGainVector(std::vector<double> gainVector)
 {
-    for (int i = 0; i < N_EQ; i++) {
-        gDB[i] = gainVector[i];
-    }
+    gDB = gainVector;
     setPolesAndZeros();
 }
 
@@ -148,6 +146,7 @@ void PropEQ::setPolesAndZeros()
         for (int i = 0; i < N_EQ; i++)
         {
             G2optdb[i] = solution2(i);
+            jassert(G2optdb[i] <= 0.0);
         }
 
         for (int k = 0; k < N_EQ; k++)
@@ -181,6 +180,8 @@ void PropEQ::setPolesAndZeros()
         coeffs[N_DF].b1 = bH1 / aH0;
         coeffs[N_DF].a0 = aH0 / aH0;
         coeffs[N_DF].a1 = aH1 / aH0;
+
+        //enforceStability();
     }
 }
 
@@ -245,6 +246,21 @@ std::vector<double> PropEQ::getCoefficients(double g, double gb, double w0, doub
     double a3 = (1.0 - beta) / (1.0 + beta);
 
     return std::vector<double> {b1, b2, b3, a1, a2, a3};
+}
+
+void PropEQ::enforceStability()
+{
+	for (int i = 0; i < N_EQ; i++)
+	{
+        if (abs(coeffs[i].a1) >= 1.0 + coeffs[i].a2)
+        {
+
+        }
+        if (abs(coeffs[i].a2) >= 1.0)
+        {
+
+        }
+	}
 }
 
 void PropEQ::updateState(int idx)

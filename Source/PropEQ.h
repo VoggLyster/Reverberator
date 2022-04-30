@@ -30,12 +30,13 @@ public:
     ~PropEQ() {}
 
     void prepare(double samplerate);
-    void setGainVector(float gainVector[N_EQ]);
+    void setGainVector(std::vector<double> gainVector);
     float process(float input);
 
 private:
     void setPolesAndZeros();
     std::vector<double> getCoefficients(double g, double gb, double w0, double bw);
+    void enforceStability();
     void updateState(int idx);
     float filter(double input, int idx);
     void interactionMatrix(double* g, double gw, double* wg, double* wc, double* bw);
@@ -43,7 +44,7 @@ private:
     double samplerate;
     bool isReady = false;
 
-    double gDB[N_EQ] = { 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f };
+    std::vector<double> gDB;
     std::vector<double> gDB2;
     double g2[N_EQ];
     double g2wdb[N_EQ];

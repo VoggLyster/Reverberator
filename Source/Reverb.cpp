@@ -90,19 +90,21 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
 
     predelayLength = floor(*predelayLengthParameter/100.f * (fs/1000 * predelayMaxLengthMs));
     predelayLine->setDelay(predelayLength);
+    tempGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
-        tempGain[j] = (*eqGainParameters[j]/100.f * 29.0) - 30.0;
-    }
+        //tempGain[j] = (*eqGainParameters[j]/100.f * 29.0) - 30.0;
+        tempGain[j] = (*eqGainParameters[j] / 100.f * 2.4f + 0.1f);
+    }	
 
     for (int i = 0; i < N_LINES; i++) {
         b[i] = pow(10, (*bParameters[i] / 100.f * 12.f - 12.f) / 20.0);
         c[i] = pow(10, (*cParameters[i] / 100.f * 12.f - 12.f) / 20.0);
 
-        propEQs[i]->setGainVector(tempGain);
         delayLengths[i] = delayLengths_[i];
         DBG(juce::String(delayLengths[i]));
         delayLines[i]->setDelay(delayLengths[i]);
+        propEQs[i]->setGainVector(RTtoGain(tempGain, i));
         lfos[i]->setFrequency(*modFrequencyParameters[i] * 0.03f);
         modDepth[i] = *modDepthParameters[i] * 0.1f;
     }
@@ -198,11 +200,11 @@ std::vector<int> ReverbProcessor::getPrimePowerDelays(float minPath, float maxPa
 {
     // https://github.com/grame-cncm/faustlibraries/blob/master/delays.lib
 
-    std::vector<int> delayLengths = std::vector<int>();
+    std::vector<int> _delayLengths = std::vector<int>();
     int dmin = fs * minPath / c_;
     if (N_LINES == 1) {
-        delayLengths.push_back(dmin);
-        return delayLengths;
+        _delayLengths.push_back(dmin);
+        return _delayLengths;
     }
     int dmax = fs * maxPath / c_;
     for (int i = 0; i < N_LINES; i++) {
@@ -211,9 +213,22 @@ std::vector<int> ReverbProcessor::getPrimePowerDelays(float minPath, float maxPa
         Mi = juce::jmin(int(pow(primes[i], mi)), maxDelayLineLength);
         //DBG(juce::String(mi));
         DBG(juce::String(Mi));
-        delayLengths.push_back(Mi);
+        _delayLengths.push_back(Mi);
     }
-    return delayLengths;
+    return _delayLengths;
+}
+
+std::vector<double> ReverbProcessor::RTtoGain(std::vector<float> RT, int idx)
+{
+	std::vector<double> gain = std::vector<double>();
+    float delta;
+	
+	for (int i = 0; i < N_EQ; i++) {
+        delta = (-60 / (fs * RT[i]));
+        gain.push_back(delta * delayLengths[idx]);
+	}
+
+    return gain;
 }
 
 
