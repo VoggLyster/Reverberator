@@ -72,6 +72,7 @@ public:
     int getModeDensity(std::vector<int> delayLengths);
     std::vector<int> getPrimePowerDelays(float minPath, float maxPath);
     std::vector<double> RTtoGain(std::vector<float> RT, int idx);
+    void reset();
 
 private:
     double fs = 48000; // Assume 48000 as default

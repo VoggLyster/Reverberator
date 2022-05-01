@@ -172,7 +172,7 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
 
     auto* leftChannelData = buffer.getWritePointer(0);
-    auto* rightChannelData = buffer.getWritePointer(1);
+    //auto* rightChannelData = buffer.getWritePointer(1);
 
     for (int n = 0; n < buffer.getNumSamples(); n++) {
         float output = reverbProcessor->process(leftChannelData[n]);
@@ -211,6 +211,11 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
     reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
+}
+
+void ReverberatorAudioProcessor::reset()
+{
+    reverbProcessor->reset();
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::createParameterLayout()

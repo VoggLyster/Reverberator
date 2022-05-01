@@ -56,6 +56,8 @@ public:
 
     void parameterChanged(const String& parameterID, float newValue) override;
 
+    void reset() override;
+	
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
 private:

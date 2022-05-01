@@ -32,6 +32,7 @@ public:
     void prepare(double samplerate);
     void setGainVector(std::vector<double> gainVector);
     float process(float input);
+    void reset();
 
 private:
     void setPolesAndZeros();
@@ -40,6 +41,7 @@ private:
     void updateState(int idx);
     float filter(double input, int idx);
     void interactionMatrix(double* g, double gw, double* wg, double* wc, double* bw);
+    float clampValue(float v, float lower, float upper);
 
     double samplerate;
     bool isReady = false;

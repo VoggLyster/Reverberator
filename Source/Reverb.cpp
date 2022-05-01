@@ -231,6 +231,16 @@ std::vector<double> ReverbProcessor::RTtoGain(std::vector<float> RT, int idx)
     return gain;
 }
 
+void ReverbProcessor::reset()
+{
+	for (int i = 0; i < N_LINES; i++) {
+        delayLines[i]->reset();
+        propEQs[i]->reset();
+        s[i] = 0.0f;
+		s_prev[i] = 0.0f;
+	}
+}
+
 
 Biquad::Biquad() {}
 

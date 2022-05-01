@@ -9,6 +9,7 @@
 */
 
 #include "PropEQ.h"
+#include <algorithm>
 
 PropEQ::PropEQ()
 {
@@ -50,6 +51,39 @@ void PropEQ::setGainVector(std::vector<double> gainVector)
 {
     gDB = gainVector;
     setPolesAndZeros();
+}
+
+void PropEQ::reset()
+{
+    isReady = false;
+	
+    Goptdb.clear();
+    Gopt.clear();
+    G2optdb.clear();
+    G2opt.clear();
+    G2woptdb.clear();
+    G2wopt.clear();
+
+    leak.clear();
+
+    Goptdb.resize(N_EQ, 0);
+    Gopt.resize(N_EQ, 0);
+    G2optdb.resize(N_EQ, 0);
+    G2opt.resize(N_EQ, 0);
+    G2woptdb.resize(N_EQ, 0);
+    G2wopt.resize(N_EQ, 0);
+
+    leak.resize(N_EQ, std::vector<double>(N_DF, 0));
+    for (int i = 0; i < N_EQ; i++) {
+        states[i].x1 = 0.f;
+        states[i].x2 = 0.f;
+        states[i].y0 = 0.f;
+        states[i].y1 = 0.f;
+        states[i].y2 = 0.f;
+    }
+    setPolesAndZeros();
+
+    isReady = true;
 }
 
 float PropEQ::process(float input)
@@ -146,7 +180,9 @@ void PropEQ::setPolesAndZeros()
         for (int i = 0; i < N_EQ; i++)
         {
             G2optdb[i] = solution2(i);
-            jassert(G2optdb[i] <= 0.0);
+            //jassert(G2optdb[i] <= 0.0);
+			if (G2optdb[i] <= 0.0)
+				G2optdb[i] = 0.0;
         }
 
         for (int k = 0; k < N_EQ; k++)
@@ -229,6 +265,11 @@ void PropEQ::interactionMatrix(double* g, double gw, double* wg, double* wc, dou
 
 }
 
+float PropEQ::clampValue(float v, float lower, float upper)
+{
+    return std::max(lower, std::min(v, upper));
+}
+
 std::vector<double> PropEQ::getCoefficients(double g, double gb, double w0, double bw)
 {
     double beta;
@@ -269,6 +310,13 @@ void PropEQ::updateState(int idx)
     states[idx].x1 = x0;
     states[idx].y2 = states[idx].y1;
     states[idx].y1 = states[idx].y0;
+
+	// Clip states for stability - this should be addressed in the future
+    states[idx].x2 = clampValue(states[idx].x2, -1.f, 1.f);
+    states[idx].x1 = clampValue(states[idx].x1, -1.f, 1.f);
+    states[idx].y2 = clampValue(states[idx].y2, -1.f, 1.f);
+    states[idx].y1 = clampValue(states[idx].y1, -1.f, 1.f);
+
 }
 
 
