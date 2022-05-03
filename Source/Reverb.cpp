@@ -126,6 +126,10 @@ void ReverbProcessor::setDelayLengthParameters(std::atomic<float>* delayLengthMi
         delayLengths[i] = delayLengths_[i];
         delayLines[i]->setDelay(delayLengths[i]);
     }
+
+    for (int i = 0; i < N_LINES; i++) {
+        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
+    }
 }
 
 void ReverbProcessor::setPredelayLengthParameter(std::atomic<float>* predelayLengthParameter)

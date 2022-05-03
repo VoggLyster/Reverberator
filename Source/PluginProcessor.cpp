@@ -223,9 +223,9 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    if (parameterID.contains("b_"))
+    if (parameterID.contains("b"))
         reverbProcessor->setBGainParameters(bParameters);
-    else if (parameterID.contains("c_"))
+    else if (parameterID.contains("c"))
         reverbProcessor->setCGainParameters(cParameters);
     else if (parameterID.contains("RT_"))
         reverbProcessor->setAttenuationGainParameters(attenuationGainParameters);
