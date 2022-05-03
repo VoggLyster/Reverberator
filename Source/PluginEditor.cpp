@@ -53,11 +53,19 @@ ReverberatorAudioProcessorEditor::ReverberatorAudioProcessorEditor (Reverberator
     predelayLengthAttachment.reset(new SliderAttachment(valueTreeState, "predelay_length", predelayLengthSlider));
 
     for (int j = 0; j < N_EQ; j++) {
-        name = "eq_gain_" + String(j);
-        eqGainLabels[j].setText(name, juce::dontSendNotification);
-        mainComponent.addAndMakeVisible(eqGainLabels[j]);
-        mainComponent.addAndMakeVisible(eqGainSliders[j]);
-        eqGainAttachments[j].reset(new SliderAttachment(valueTreeState, name, eqGainSliders[j]));
+        name = "RT_" + String(j);
+        RTLabels[j].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(RTLabels[j]);
+        mainComponent.addAndMakeVisible(RTSliders[j]);
+        RTAttachments[j].reset(new SliderAttachment(valueTreeState, name, RTSliders[j]));
+    }
+
+    for (int j = 0; j < N_EQ; j++) {
+        name = "tonal_gain_" + String(j);
+        tonalLabels[j].setText(name, juce::dontSendNotification);
+        mainComponent.addAndMakeVisible(tonalLabels[j]);
+        mainComponent.addAndMakeVisible(tonalSliders[j]);
+        tonalAttachments[j].reset(new SliderAttachment(valueTreeState, name, tonalSliders[j]));
     }
 
     setSize (400, 1200);
@@ -103,8 +111,14 @@ void ReverberatorAudioProcessorEditor::resized()
     height += 25;
 
     for (int j = 0; j < N_EQ; j++) {
-        eqGainLabels[j].setBounds(5, height, 100, size);
-        eqGainSliders[j].setBounds(105, height, 185, size);
+        RTLabels[j].setBounds(5, height, 100, size);
+        RTSliders[j].setBounds(105, height, 185, size);
+        height += 25;
+    }
+
+    for (int j = 0; j < N_EQ; j++) {
+        tonalLabels[j].setBounds(5, height, 100, size);
+        tonalSliders[j].setBounds(105, height, 185, size);
         height += 25;
     }
 

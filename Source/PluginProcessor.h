@@ -65,7 +65,8 @@ private:
     std::atomic<float>* bParameters[N_LINES];
     std::atomic<float>* cParameters[N_LINES];
     std::atomic<float>* MParameters[N_LINES];
-    std::atomic<float>* eqGainParameters[N_EQ];
+    std::atomic<float>* attenuationGainParameters[N_EQ];
+    std::atomic<float>* tonalGainParameters[N_EQ];
     std::atomic<float>* modFreqParameters[N_LINES];
     std::atomic<float>* modDepthParameters[N_LINES];
     std::atomic<float>* delayLengthMaxParameter;

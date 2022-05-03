@@ -59,7 +59,8 @@ public:
     void prepare(double samplerate, int samplesPerBlock);
     void setParameters(std::atomic<float>* bParameters[N_LINES],
         std::atomic<float>* cParameters[N_LINES],
-        std::atomic<float>* eqGainParameters[N_EQ],
+        std::atomic<float>* attenuationGainParameters[N_EQ],
+		std::atomic<float>* tonalGainParameters[N_EQ],
         std::atomic<float>* delayLengthMaxParameter,
         std::atomic<float>* delayLengthMinParameter,
         std::atomic<float>* predelayLengthParameter,
@@ -91,7 +92,9 @@ private:
     float s_prev[N_LINES];
     juce::dsp::Matrix<float> A = juce::dsp::Matrix<float>(N_LINES, N_LINES);
     std::unique_ptr<PropEQ> propEQs[N_LINES];
-    std::vector<float> tempGain;
+    std::unique_ptr<PropEQ> tonalFilter;
+    std::vector<float> attenuationGain;
+	std::vector<double> tonalGain;
     std::unique_ptr<LFO> lfos[N_LINES];
     float lfoFrequencies[N_LINES];
     float modDepth[N_LINES];

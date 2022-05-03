@@ -44,6 +44,7 @@ ReverbProcessor::ReverbProcessor()
         lfos[i] = std::make_unique<LFO>();
         lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
     }
+    tonalFilter = std::make_unique<PropEQ>();
     predelayLine = std::make_unique<juce::dsp::DelayLine<float>>(maxDelayLineLength);
     predelayLength = 0;
 }
@@ -71,13 +72,15 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
         lfos[i]->prepare(fs);
         lfos[i]->setFrequency(lfoFrequencies[i]);      
     }
+    tonalFilter->prepare(fs);
     predelayLine->prepare(procSpec);
     ready = true;
 }
 
 void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     std::atomic<float>* cParameters[N_LINES],
-    std::atomic<float>* eqGainParameters[N_EQ],
+    std::atomic<float>* attenuationGainParameters[N_EQ],
+    std::atomic<float>* tonalGainParameters[N_EQ],
     std::atomic<float>* delayLengthMaxParameter,
     std::atomic<float>* delayLengthMinParameter,
     std::atomic<float>* predelayLengthParameter,
@@ -88,14 +91,18 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
     delayLengthMax = delayLengthMin + 10.0f + 0.2f * *delayLengthMaxParameter;
     std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);
 
+
     predelayLength = floor(*predelayLengthParameter/100.f * (fs/1000 * predelayMaxLengthMs));
     predelayLine->setDelay(predelayLength);
-    tempGain.resize(N_EQ, 0.f);
+    attenuationGain.resize(N_EQ, 0.f);
+    tonalGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
-        //tempGain[j] = (*eqGainParameters[j]/100.f * 29.0) - 30.0;
-        tempGain[j] = (*eqGainParameters[j] / 100.f * 2.4f + 0.1f);
+        attenuationGain[j] = (*attenuationGainParameters[j] / 100.f * 2.4f + 0.1f);
+        tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 30.0) - 30.0;
     }	
+
+    tonalFilter->setGainVector(tonalGain);
 
     for (int i = 0; i < N_LINES; i++) {
         b[i] = pow(10, (*bParameters[i] / 100.f * 12.f - 12.f) / 20.0);
@@ -104,7 +111,7 @@ void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
         delayLengths[i] = delayLengths_[i];
         DBG(juce::String(delayLengths[i]));
         delayLines[i]->setDelay(delayLengths[i]);
-        propEQs[i]->setGainVector(RTtoGain(tempGain, i));
+        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
         lfos[i]->setFrequency(*modFrequencyParameters[i] * 0.03f);
         modDepth[i] = *modDepthParameters[i] * 0.1f;
     }
@@ -134,6 +141,9 @@ float ReverbProcessor::process(float input)
         for (int i = 0; i < N_LINES; i++) {
             s_prev[i] = s[i];
         }
+
+		output = tonalFilter->process(output);
+		
     }
     return output;
 }
@@ -239,6 +249,7 @@ void ReverbProcessor::reset()
         s[i] = 0.0f;
 		s_prev[i] = 0.0f;
 	}
+    tonalFilter->reset();
 }
 
 

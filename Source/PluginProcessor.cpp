@@ -33,8 +33,14 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
     parameters.addParameterListener(parameterName, this);
 
     for (int j = 0; j < N_EQ; j++) {
-        parameterName = "eq_gain_" + String(j);
-        eqGainParameters[j] = parameters.getRawParameterValue(parameterName);
+        parameterName = "RT_" + String(j);
+        attenuationGainParameters[j] = parameters.getRawParameterValue(parameterName);
+        parameters.addParameterListener(parameterName, this);
+    }
+
+    for (int j = 0; j < N_EQ; j++) {
+        parameterName = "tonal_gain_" + String(j);
+        tonalGainParameters[j] = parameters.getRawParameterValue(parameterName);
         parameters.addParameterListener(parameterName, this);
     }
 
@@ -128,7 +134,7 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
+    reverbProcessor->setParameters(bParameters, cParameters, attenuationGainParameters, tonalGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -210,7 +216,7 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    reverbProcessor->setParameters(bParameters, cParameters, eqGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
+    reverbProcessor->setParameters(bParameters, cParameters, attenuationGainParameters, tonalGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
 }
 
 void ReverberatorAudioProcessor::reset()
@@ -227,15 +233,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
     params.add(std::make_unique<AudioParameterFloat>("predelay_length", "predelay_length", 0.0f, 100.0f, 20.0f));
     juce::String name = "";
     for (int j = 0; j < N_EQ; j++) {
-        name = "eq_gain_" + String(j);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 90.0f));
+        name = "RT_" + String(j);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
     }
-
+    for (int j = 0; j < N_EQ; j++) {
+        name = "tonal_gain_" + String(j);
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
+    }
     for (int i = 0; i < N_LINES; i++) {
         name = "b" + String(i) + "_gain";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 90.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
         name = "c" + String(i) + "_gain";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 90.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
         name = "mod" + String(i) + "_freq";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 0.0f));
         name = "mod" + String(i) + "_depth";
