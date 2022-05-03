@@ -77,42 +77,73 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     ready = true;
 }
 
-void ReverbProcessor::setParameters(std::atomic<float>* bParameters[N_LINES],
-    std::atomic<float>* cParameters[N_LINES],
-    std::atomic<float>* attenuationGainParameters[N_EQ],
-    std::atomic<float>* tonalGainParameters[N_EQ],
-    std::atomic<float>* delayLengthMaxParameter,
-    std::atomic<float>* delayLengthMinParameter,
-    std::atomic<float>* predelayLengthParameter,
-    std::atomic<float>* modFrequencyParameters[N_LINES],
-    std::atomic<float>* modDepthParameters[N_LINES]) {
-    
-    delayLengthMin = 10.0f + 0.1f * *delayLengthMinParameter;
-    delayLengthMax = delayLengthMin + 10.0f + 0.2f * *delayLengthMaxParameter;
-    std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);
+void ReverbProcessor::setBGainParameters(std::atomic<float>* bParameters[N_LINES])
+{
+    for (int i = 0; i < N_LINES; i++) {
+        b[i] = pow(10, (*bParameters[i] / 100.f * 12.f - 12.f) / 20.0);
+    }
+}
 
+void ReverbProcessor::setCGainParameters(std::atomic<float>* cParameters[N_LINES])
+{
+    for (int i = 0; i < N_LINES; i++) {
+        c[i] = pow(10, (*cParameters[i] / 100.f * 12.f - 12.f) / 20.0);
+    }
+}
 
-    predelayLength = floor(*predelayLengthParameter/100.f * (fs/1000 * predelayMaxLengthMs));
-    predelayLine->setDelay(predelayLength);
+void ReverbProcessor::setAttenuationGainParameters(std::atomic<float>* attenuationGainParameters[N_EQ])
+{
     attenuationGain.resize(N_EQ, 0.f);
-    tonalGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
         attenuationGain[j] = (*attenuationGainParameters[j] / 100.f * 2.4f + 0.1f);
+    }
+	
+    for (int i = 0; i < N_LINES; i++) {
+        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
+    }
+}
+
+
+void ReverbProcessor::setTonalGainParameters(std::atomic<float>* tonalGainParameters[N_EQ])
+{
+    tonalGain.resize(N_EQ, 0.f);
+
+    for (int j = 0; j < N_EQ; j++) {
         tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 30.0) - 30.0;
-    }	
+    }
 
     tonalFilter->setGainVector(tonalGain);
+}
 
+void ReverbProcessor::setDelayLengthParameters(std::atomic<float>* delayLengthMinParameter, std::atomic<float>* delayLengthMaxParameter)
+{
+    delayLengthMin = 10.0f + 0.1f * *delayLengthMinParameter;
+    delayLengthMax = delayLengthMin + 10.0f + 0.2f * *delayLengthMaxParameter;
+    std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);	
+	
     for (int i = 0; i < N_LINES; i++) {
-        b[i] = pow(10, (*bParameters[i] / 100.f * 12.f - 12.f) / 20.0);
-        c[i] = pow(10, (*cParameters[i] / 100.f * 12.f - 12.f) / 20.0);
-
         delayLengths[i] = delayLengths_[i];
-        DBG(juce::String(delayLengths[i]));
         delayLines[i]->setDelay(delayLengths[i]);
-        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
+    }
+}
+
+void ReverbProcessor::setPredelayLengthParameter(std::atomic<float>* predelayLengthParameter)
+{
+    predelayLength = floor(*predelayLengthParameter / 100.f * (fs / 1000 * predelayMaxLengthMs));
+    predelayLine->setDelay(predelayLength);
+}
+
+void ReverbProcessor::setModFrequencyParameters(std::atomic<float>* modFrequencyParameters[N_LINES])
+{
+    for (int i = 0; i < N_LINES; i++) {
         lfos[i]->setFrequency(*modFrequencyParameters[i] * 0.03f);
+    }
+}
+
+void ReverbProcessor::setModDepthParameters(std::atomic<float>* modDepthParameters[N_LINES])
+{
+    for (int i = 0; i < N_LINES; i++) {
         modDepth[i] = *modDepthParameters[i] * 0.1f;
     }
 }

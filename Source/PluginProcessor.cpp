@@ -134,7 +134,14 @@ void ReverberatorAudioProcessor::changeProgramName (int index, const juce::Strin
 void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
-    reverbProcessor->setParameters(bParameters, cParameters, attenuationGainParameters, tonalGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
+    reverbProcessor->setBGainParameters(bParameters);
+    reverbProcessor->setCGainParameters(cParameters);
+    reverbProcessor->setAttenuationGainParameters(attenuationGainParameters);
+    reverbProcessor->setTonalGainParameters(tonalGainParameters);
+    reverbProcessor->setDelayLengthParameters(delayLengthMinParameter, delayLengthMaxParameter);
+    reverbProcessor->setPredelayLengthParameter(predelayLengthParameter);
+    reverbProcessor->setModFrequencyParameters(modFreqParameters);
+    reverbProcessor->setModDepthParameters(modDepthParameters);
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -216,7 +223,22 @@ void ReverberatorAudioProcessor::setStateInformation(const void* data, int sizeI
 
 void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, float newValue)
 {
-    reverbProcessor->setParameters(bParameters, cParameters, attenuationGainParameters, tonalGainParameters, delayLengthMaxParameter, delayLengthMinParameter, predelayLengthParameter, modFreqParameters, modDepthParameters);
+    if (parameterID.contains("b_"))
+        reverbProcessor->setBGainParameters(bParameters);
+    else if (parameterID.contains("c_"))
+        reverbProcessor->setCGainParameters(cParameters);
+    else if (parameterID.contains("RT_"))
+        reverbProcessor->setAttenuationGainParameters(attenuationGainParameters);
+    else if (parameterID.contains("tonal_gain_"))
+        reverbProcessor->setTonalGainParameters(tonalGainParameters);
+    else if (parameterID.contains("delay_length_max") || parameterID.contains("delay_length_min"))
+        reverbProcessor->setDelayLengthParameters(delayLengthMinParameter, delayLengthMaxParameter);
+    else if (parameterID.contains("predelay_length"))
+        reverbProcessor->setPredelayLengthParameter(predelayLengthParameter);
+    else if (parameterID.contains("_freq"))
+        reverbProcessor->setModFrequencyParameters(modFreqParameters);
+    else if (parameterID.contains("_depth"))
+        reverbProcessor->setModDepthParameters(modDepthParameters);
 }
 
 void ReverberatorAudioProcessor::reset()

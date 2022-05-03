@@ -57,15 +57,25 @@ public:
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
-    void setParameters(std::atomic<float>* bParameters[N_LINES],
-        std::atomic<float>* cParameters[N_LINES],
-        std::atomic<float>* attenuationGainParameters[N_EQ],
-		std::atomic<float>* tonalGainParameters[N_EQ],
-        std::atomic<float>* delayLengthMaxParameter,
-        std::atomic<float>* delayLengthMinParameter,
-        std::atomic<float>* predelayLengthParameter,
-        std::atomic<float>* modFrequencyParameters[N_LINES],
-        std::atomic<float>* modDepthParameters[N_LINES]);
+  //  void setParameters(std::atomic<float>* bParameters[N_LINES],
+  //      std::atomic<float>* cParameters[N_LINES],
+  //      std::atomic<float>* attenuationGainParameters[N_EQ],
+		//std::atomic<float>* tonalGainParameters[N_EQ],
+  //      std::atomic<float>* delayLengthMaxParameter,
+  //      std::atomic<float>* delayLengthMinParameter,
+  //      std::atomic<float>* predelayLengthParameter,
+  //      std::atomic<float>* modFrequencyParameters[N_LINES],
+  //      std::atomic<float>* modDepthParameters[N_LINES]);
+
+    void setBGainParameters(std::atomic<float>* bParameters[N_LINES]);
+    void setCGainParameters(std::atomic<float>* cParameters[N_LINES]);
+    void setAttenuationGainParameters(std::atomic<float>* attenuationGainParameters[N_EQ]);
+    void setTonalGainParameters(std::atomic<float>* tonalGainParameters[N_EQ]);
+	void setDelayLengthParameters(std::atomic<float>* delayLengthMinParameter, std::atomic<float>* delayLengthMaxParameter);
+	void setPredelayLengthParameter(std::atomic<float>* predelayLengthParameter);
+	void setModFrequencyParameters(std::atomic<float>* modFrequencyParameters[N_LINES]);
+	void setModDepthParameters(std::atomic<float>* modDepthParameters[N_LINES]);
+
     float process(float input);
     std::vector<int> generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples);
     int gcd(int a, int b);
