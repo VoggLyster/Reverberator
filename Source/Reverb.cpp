@@ -20,33 +20,9 @@ ReverbProcessor::ReverbProcessor()
         s_prev[i] = 0.0f;
         delayLengths[i] = 0;
         modDepth[i] = 0;
+        attenuationGain.resize(N_EQ, 0);
+        tonalGain.resize(N_EQ, 0);
     }
-    const float* householder;
-    switch (N_LINES)
-    {
-    case 16:
-        householder = householder16;
-        break;
-    case 4:
-        householder = householder4;
-        break;
-    case 2:
-        householder = householder2;
-        break;
-    default:
-        householder = householder1;
-        break;
-    }
-    A = juce::dsp::Matrix<float>(N_LINES, N_LINES, householder);
-    for (int i = 0; i < N_LINES; i++) {
-        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(maxDelayLineLength);
-        propEQs[i] = std::make_unique<PropEQ>();
-        lfos[i] = std::make_unique<LFO>();
-        lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
-    }
-    tonalFilter = std::make_unique<PropEQ>();
-    predelayLine = std::make_unique<juce::dsp::DelayLine<float>>(maxDelayLineLength);
-    predelayLength = 0;
 }
 
 ReverbProcessor::~ReverbProcessor()
@@ -55,6 +31,18 @@ ReverbProcessor::~ReverbProcessor()
 
 void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
 {
+    setMatrix(MatrixType::hadamard);
+
+    for (int i = 0; i < N_LINES; i++) {
+        delayLines[i] = std::make_unique<juce::dsp::DelayLine<float>>(maxDelayLineLength);
+        propEQs[i] = std::make_unique<PropEQ>(samplerate);
+        lfos[i] = std::make_unique<LFO>();
+        lfoFrequencies[i] = juce::Random::getSystemRandom().nextFloat() * 3.0f;
+    }
+    tonalFilter = std::make_unique<PropEQ>(samplerate);
+    predelayLine = std::make_unique<juce::dsp::DelayLine<float>>(maxDelayLineLength);
+    predelayLength = 0;
+	
     fs = samplerate;
     dsp::ProcessSpec procSpec = dsp::ProcessSpec();
     procSpec.maximumBlockSize = samplesPerBlock;
@@ -68,11 +56,11 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     for (int i = 0; i < N_LINES; i++) {
         delayLengths[i] = delayLengths_[i];
         delayLines[i]->prepare(procSpec);
-        propEQs[i]->prepare(fs);
+        //propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
         lfos[i]->prepare(fs);
-        lfos[i]->setFrequency(lfoFrequencies[i]);      
+        //lfos[i]->setFrequency(lfoFrequencies[i]);      
     }
-    tonalFilter->prepare(fs);
+    //tonalFilter->setGainVector(tonalGain);
     predelayLine->prepare(procSpec);
     ready = true;
 }
@@ -100,7 +88,8 @@ void ReverbProcessor::setAttenuationGainParameters(std::atomic<float>* attenuati
     }
 	
     for (int i = 0; i < N_LINES; i++) {
-        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
+		if(propEQs[i] != nullptr)
+            propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
     }
 }
 
@@ -112,36 +101,41 @@ void ReverbProcessor::setTonalGainParameters(std::atomic<float>* tonalGainParame
     for (int j = 0; j < N_EQ; j++) {
         tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 30.0) - 30.0;
     }
-
-    tonalFilter->setGainVector(tonalGain);
+    if(tonalFilter != nullptr)
+        tonalFilter->setGainVector(tonalGain);
 }
 
 void ReverbProcessor::setDelayLengthParameters(std::atomic<float>* delayLengthMinParameter, std::atomic<float>* delayLengthMaxParameter)
 {
-    delayLengthMin = 10.0f + 0.1f * *delayLengthMinParameter;
-    delayLengthMax = delayLengthMin + 10.0f + 0.2f * *delayLengthMaxParameter;
+    delayLengthMin = 20.0f + 0.1f * *delayLengthMinParameter;
+    delayLengthMax = delayLengthMin + 20.0f + 0.2f * *delayLengthMaxParameter;
     std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);	
 	
     for (int i = 0; i < N_LINES; i++) {
         delayLengths[i] = delayLengths_[i];
-        delayLines[i]->setDelay(delayLengths[i]);
+        if(delayLines[i] != nullptr)
+            delayLines[i]->setDelay(delayLengths[i]);
     }
 
     for (int i = 0; i < N_LINES; i++) {
-        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
+        if(propEQs[i] != nullptr)
+            propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
     }
 }
 
 void ReverbProcessor::setPredelayLengthParameter(std::atomic<float>* predelayLengthParameter)
 {
     predelayLength = floor(*predelayLengthParameter / 100.f * (fs / 1000 * predelayMaxLengthMs));
-    predelayLine->setDelay(predelayLength);
+    if (predelayLine != nullptr) {
+		predelayLine->setDelay(predelayLength);
+	}
 }
 
 void ReverbProcessor::setModFrequencyParameters(std::atomic<float>* modFrequencyParameters[N_LINES])
 {
     for (int i = 0; i < N_LINES; i++) {
-        lfos[i]->setFrequency(*modFrequencyParameters[i] * 0.03f);
+		if(lfos[i] != nullptr)
+            lfos[i]->setFrequency(*modFrequencyParameters[i] * 0.03f);
     }
 }
 
@@ -181,6 +175,33 @@ float ReverbProcessor::process(float input)
 		
     }
     return output;
+}
+
+void ReverbProcessor::setMatrix(MatrixType type)
+{
+    const float* matrix;
+    switch (N_LINES)
+    {
+    case 16:
+        if (type == MatrixType::householder)
+            matrix = householder16;
+        else
+            matrix = hadamard16;
+        break;
+    case 4:
+        if (type == MatrixType::householder)
+			matrix = householder4;
+		else
+			matrix = hadamard4;
+        break;
+    default:
+        if (type == MatrixType::householder)
+			matrix = householder1;
+		else
+			matrix = hadamard1;
+        break;
+    }
+    A = juce::dsp::Matrix<float>(N_LINES, N_LINES, matrix);
 }
 
 std::vector<int> ReverbProcessor::generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples)

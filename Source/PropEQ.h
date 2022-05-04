@@ -26,16 +26,15 @@ struct Coeffs {
 class PropEQ
 {
 public:
-    PropEQ();
+    PropEQ(double samplerate);
     ~PropEQ() {}
 
-    void prepare(double samplerate);
     void setGainVector(std::vector<double> gainVector);
     float process(float input);
     void reset();
+    void setPolesAndZeros();
 
 private:
-    void setPolesAndZeros();
     std::vector<double> getCoefficients(double g, double gb, double w0, double bw);
     void enforceStability();
     void updateState(int idx);
@@ -48,9 +47,6 @@ private:
 
     std::vector<double> gDB;
     std::vector<double> gDB2;
-    double g2[N_EQ];
-    double g2wdb[N_EQ];
-    double g2w[N_EQ];
 
     std::vector<double> tempCoeffs;
     double x0;
@@ -59,6 +55,9 @@ private:
 
     double commandGainFrequencies[N_EQ] = { 31.25, 62.5, 125, 250, 500, 1000, 2000, 4000, 8000, 16000 };
     double centerFrequencies[N_DF] = { 31.25, 44.2, 62.5, 88.39, 125, 176.78, 250, 353.55, 500, 707.11, 1000, 1414.2, 2000, 2828.4, 4000, 5656.9, 8000, 11313.7, 16000 };
+    //std::vector<double> wg;
+    //std::vector<double> wc;
+    //std::vector<double> bandwidths;
     double bandwidths[N_EQ];
     double wg[N_EQ];
     double wc[N_DF];

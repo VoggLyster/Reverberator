@@ -136,9 +136,9 @@ void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     reverbProcessor->prepare(sampleRate, samplesPerBlock);
     reverbProcessor->setBGainParameters(bParameters);
     reverbProcessor->setCGainParameters(cParameters);
+    reverbProcessor->setDelayLengthParameters(delayLengthMinParameter, delayLengthMaxParameter);
     reverbProcessor->setAttenuationGainParameters(attenuationGainParameters);
     reverbProcessor->setTonalGainParameters(tonalGainParameters);
-    reverbProcessor->setDelayLengthParameters(delayLengthMinParameter, delayLengthMaxParameter);
     reverbProcessor->setPredelayLengthParameter(predelayLengthParameter);
     reverbProcessor->setModFrequencyParameters(modFreqParameters);
     reverbProcessor->setModDepthParameters(modDepthParameters);
@@ -239,6 +239,8 @@ void ReverberatorAudioProcessor::parameterChanged(const String& parameterID, flo
         reverbProcessor->setModFrequencyParameters(modFreqParameters);
     else if (parameterID.contains("_depth"))
         reverbProcessor->setModDepthParameters(modDepthParameters);
+    else if (parameterID.contains("matrix_type"))
+        reverbProcessor->setMatrix(static_cast<MatrixType>((int) * matrixTypeParameter/100));
 }
 
 void ReverberatorAudioProcessor::reset()
@@ -272,7 +274,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
         name = "mod" + String(i) + "_depth";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 0.0f));
     }
-
+    params.add(std::make_unique<AudioParameterInt>("matrix_type", "matrix_type", 0, 100, 0));
 
     return params;
 }

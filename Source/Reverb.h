@@ -11,6 +11,12 @@
 #include "LFO.h"
 #include "PropEQ.h"
 
+enum MatrixType
+{
+    householder = 0,
+    hadamard = 1,
+};
+
 class Biquad
 {
 public:
@@ -57,15 +63,7 @@ public:
     ~ReverbProcessor();
 
     void prepare(double samplerate, int samplesPerBlock);
-  //  void setParameters(std::atomic<float>* bParameters[N_LINES],
-  //      std::atomic<float>* cParameters[N_LINES],
-  //      std::atomic<float>* attenuationGainParameters[N_EQ],
-		//std::atomic<float>* tonalGainParameters[N_EQ],
-  //      std::atomic<float>* delayLengthMaxParameter,
-  //      std::atomic<float>* delayLengthMinParameter,
-  //      std::atomic<float>* predelayLengthParameter,
-  //      std::atomic<float>* modFrequencyParameters[N_LINES],
-  //      std::atomic<float>* modDepthParameters[N_LINES]);
+
 
     void setBGainParameters(std::atomic<float>* bParameters[N_LINES]);
     void setCGainParameters(std::atomic<float>* cParameters[N_LINES]);
@@ -77,6 +75,7 @@ public:
 	void setModDepthParameters(std::atomic<float>* modDepthParameters[N_LINES]);
 
     float process(float input);
+    void setMatrix(MatrixType type);
     std::vector<int> generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples);
     int gcd(int a, int b);
     std::vector<int> generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples);
@@ -138,20 +137,33 @@ private:
       -0.5, -0.5, 0.5, -0.5,
       -0.5, -0.5, -0.5, 0.5 };
 
-    float householder2[4] = { 0.707106781, -0.707106781, -0.707106781, 0.707106781 };
-
     float householder1[1] = { 1.0f };
 
-    //float hadamard[64] =
-    //{
-    //    0.3536,0.3536,0.3536,0.3536,0.3536,0.3536,0.3536,0.3536,
-    //    0.3536,-0.3536,0.3536,-0.3536,0.3536,-0.3536,0.3536,-0.3536,
-    //    0.3536,0.3536,-0.3536,-0.3536,0.3536,0.3536,-0.3536,-0.3536,
-    //    0.3536,-0.3536,-0.3536,0.3536,0.3536,-0.3536,-0.3536,0.3536,
-    //    0.3536,0.3536,0.3536,0.3536,-0.3536,-0.3536,-0.3536,-0.3536,
-    //    0.3536,-0.3536,0.3536,-0.3536,-0.3536,0.3536,-0.3536,0.3536,
-    //    0.3536,-0.3536,-0.3536,0.3536,-0.3536,0.3536,0.3536,-0.3536
-    //};
+    float hadamard16[256] =
+    { 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25 ,0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
+      0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25,
+      0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25,
+      0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25,
+      0.25, 0.25, 0.25, 0.25, -0.25, -0.25, -0.25, -0.25, 0.25, 0.25, 0.25, 0.25, -0.25, -0.25, -0.25, -0.25,
+      0.25, -0.25, 0.25, -0.25, -0.25, 0.25, -0.25, 0.25, 0.25, -0.25, 0.25, -0.25, -0.25, 0.25, -0.25, 0.25,
+      0.25, 0.25, -0.25, -0.25, -0.25, -0.25, 0.25, 0.25, 0.25, 0.25, -0.25, -0.25, -0.25, -0.25, 0.25, 0.25,
+      0.25, -0.25, -0.25, 0.25, -0.25, 0.25, 0.25, -0.25, 0.25, -0.25, -0.25, 0.25, -0.25, 0.25, 0.25, -0.25,
+      0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, -0.25, -0.25, -0.25, -0.25, -0.25, -0.25, -0.25, -0.25,
+      0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25,
+      0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25,
+      0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25,
+      0.25, 0.25, 0.25, 0.25, -0.25, -0.25, -0.25, -0.25, -0.25, -0.25, -0.25, -0.25, 0.25, 0.25, 0.25, 0.25,
+      0.25, -0.25, 0.25, -0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, -0.25, 0.25, 0.25, -0.25, 0.25, -0.25,
+      0.25, 0.25, -0.25, -0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, 0.25, 0.25, -0.25, -0.25,
+      0.25, -0.25, -0.25, 0.25, -0.25, 0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, 0.25, -0.25, -0.25, 0.25 };
+	
+    float hadamard4[16] = 
+    { 0.5, 0.5, 0.5, 0.5,
+	  0.5, -0.5, 0.5, -0.5,
+      0.5, 0.5, -0.5, -0.5,
+      0.5, -0.5, -0.5, 0.5 };
+                           
+    float hadamard1[1] = { 1.0f };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ReverbProcessor)
 };
