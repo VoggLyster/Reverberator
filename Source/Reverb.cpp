@@ -99,7 +99,7 @@ void ReverbProcessor::setTonalGainParameters(std::atomic<float>* tonalGainParame
     tonalGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
-        tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 30.0) - 30.0;
+        tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 60.0) - 60.0;
     }
     if(tonalFilter != nullptr)
         tonalFilter->setGainVector(tonalGain);
