@@ -41,6 +41,7 @@ private:
     float filter(double input, int idx);
     void interactionMatrix(double* g, double gw, double* wg, double* wc, double* bw);
     float clampValue(float v, float lower, float upper);
+    void zeroCoefficients();
 
     double samplerate;
     bool isReady = false;

@@ -13,38 +13,9 @@
 
 PropEQ::PropEQ(double _samplerate)
 {
-
-    Goptdb.clear();
-    Gopt.clear();
-    G2optdb.clear();
-    G2opt.clear();
-    G2woptdb.clear();
-    G2wopt.clear();
-
-    leak.clear();
-
-    Goptdb.resize(N_EQ, 0);
-    Gopt.resize(N_EQ, 0);
-    G2optdb.resize(N_EQ, 0);
-    G2opt.resize(N_EQ, 0);
-    G2woptdb.resize(N_EQ, 0);
-    G2wopt.resize(N_EQ, 0);
-
-    leak.resize(N_EQ, std::vector<double>(N_DF, 0));
-
     samplerate = _samplerate;
-    for (int i = 0; i < N_EQ; i++) {
-        states[i].x1 = 0.f;
-        states[i].x2 = 0.f;
-        states[i].y0 = 0.f;
-        states[i].y1 = 0.f;
-        states[i].y2 = 0.f;
-    }
-
-    gDB.resize(N_EQ, 0);
-    gDB2.resize(N_EQ, 0);
-    
-
+   
+    reset();
 }
 
 void PropEQ::setGainVector(std::vector<double> gainVector)
@@ -55,8 +26,6 @@ void PropEQ::setGainVector(std::vector<double> gainVector)
 
 void PropEQ::reset()
 {
-    isReady = false;
-	
     Goptdb.clear();
     Gopt.clear();
     G2optdb.clear();
@@ -74,6 +43,7 @@ void PropEQ::reset()
     G2wopt.resize(N_EQ, 0);
 
     leak.resize(N_EQ, std::vector<double>(N_DF, 0));
+
     for (int i = 0; i < N_EQ; i++) {
         states[i].x1 = 0.f;
         states[i].x2 = 0.f;
@@ -81,6 +51,11 @@ void PropEQ::reset()
         states[i].y1 = 0.f;
         states[i].y2 = 0.f;
     }
+
+    gDB.resize(N_EQ, 0);
+    gDB2.resize(N_EQ, 0);
+
+    zeroCoefficients();
 }
 
 float PropEQ::process(float input)
@@ -260,6 +235,16 @@ void PropEQ::interactionMatrix(double* g, double gw, double* wg, double* wc, dou
         }
     }
 
+}
+
+void PropEQ::zeroCoefficients()
+{
+    coeffs->b0 = 0.0;
+    coeffs->b1 = 0.0;
+    coeffs->b2 = 0.0;
+    coeffs->a0 = 0.0;
+    coeffs->a1 = 0.0;
+    coeffs->a2 = 0.0;
 }
 
 float PropEQ::clampValue(float v, float lower, float upper)
