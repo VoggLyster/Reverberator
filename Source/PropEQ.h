@@ -51,8 +51,8 @@ private:
 
     std::vector<double> tempCoeffs;
     double x0;
-    State states[N_EQ];
-    Coeffs coeffs[N_EQ];
+    State states[N_EQ + 1];
+    Coeffs coeffs[N_EQ + 1];
 
     double commandGainFrequencies[N_EQ] = { 31.25, 62.5, 125, 250, 500, 1000, 2000, 4000, 8000, 16000 };
     double centerFrequencies[N_DF] = { 31.25, 44.2, 62.5, 88.39, 125, 176.78, 250, 353.55, 500, 707.11, 1000, 1414.2, 2000, 2828.4, 4000, 5656.9, 8000, 11313.7, 16000 };

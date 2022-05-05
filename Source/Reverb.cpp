@@ -56,11 +56,8 @@ void ReverbProcessor::prepare(double samplerate, int samplesPerBlock)
     for (int i = 0; i < N_LINES; i++) {
         delayLengths[i] = delayLengths_[i];
         delayLines[i]->prepare(procSpec);
-        //propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
         lfos[i]->prepare(fs);
-        //lfos[i]->setFrequency(lfoFrequencies[i]);      
     }
-    //tonalFilter->setGainVector(tonalGain);
     predelayLine->prepare(procSpec);
     ready = true;
 }
@@ -84,7 +81,7 @@ void ReverbProcessor::setAttenuationGainParameters(std::atomic<float>* attenuati
     attenuationGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
-        attenuationGain[j] = (*attenuationGainParameters[j] / 100.f * 2.4f + 0.1f);
+        attenuationGain[j] = (*attenuationGainParameters[j] / 100.f * 2.4f + 0.03f);
     }
 	
     for (int i = 0; i < N_LINES; i++) {
@@ -99,7 +96,7 @@ void ReverbProcessor::setTonalGainParameters(std::atomic<float>* tonalGainParame
     tonalGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
-        tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 60.0) - 60.0;
+        tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 60.0) - 57.0;
     }
     if(tonalFilter != nullptr)
         tonalFilter->setGainVector(tonalGain);

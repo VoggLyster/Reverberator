@@ -44,7 +44,7 @@ void PropEQ::reset()
 
     leak.resize(N_EQ, std::vector<double>(N_DF, 0));
 
-    for (int i = 0; i < N_EQ; i++) {
+    for (int i = 0; i < N_EQ + 1; i++) {
         states[i].x1 = 0.f;
         states[i].x2 = 0.f;
         states[i].y0 = 0.f;
@@ -60,7 +60,7 @@ void PropEQ::reset()
 
 float PropEQ::process(float input)
 {
-    for (int i = 0; i < N_EQ; i++) {
+    for (int i = 0; i < N_EQ + 1; i++) {
         input = filter(input, i);
     }
     return input;
@@ -69,8 +69,6 @@ float PropEQ::process(float input)
 float PropEQ::filter(double x, int idx)
 {
     x0 = x;
-    if (x0 != 0.0)
-        int test = 0;
     states[idx].y0 = coeffs[idx].b0 * x0 + coeffs[idx].b1 * states[idx].x1 + coeffs[idx].b2 * states[idx].x2
         - coeffs[idx].a1 * states[idx].y1 - coeffs[idx].a2 * states[idx].y2;
     updateState(idx);
@@ -85,9 +83,6 @@ void PropEQ::setPolesAndZeros()
         gDB[i] = -G0 + gDB[i];
     }
 
-    //wg.resize(N_EQ, 0);
-    //wc.resize(N_DF, 0);
-    //bandwidths.resize(N_EQ, 0);
     for (int i = 0; i < N_EQ; i++) {
         wg[i] = 2.0 * juce::double_Pi * commandGainFrequencies[i] / samplerate;
     }
@@ -102,7 +97,7 @@ void PropEQ::setPolesAndZeros()
 
     bandwidths[N_EQ - 3] = 0.93 * bandwidths[N_EQ - 3];
     bandwidths[N_EQ - 2] = 0.78 * bandwidths[N_EQ - 2];
-    bandwidths[N_EQ - 1] = 0.76 * bandwidths[N_EQ - 1];
+    bandwidths[N_EQ - 1] = 0.76 * wg[N_EQ - 1];
 
     inG.resize(N_EQ, cc);
     interactionMatrix(&inG[0], gw, &wg[0], &wc[0], &bandwidths[0]);
@@ -187,10 +182,10 @@ void PropEQ::setPolesAndZeros()
     float bH0 = tmp + gH;
     float bH1 = tmp - gH;
 
-    coeffs[N_DF].b0 = bH0 / aH0;
-    coeffs[N_DF].b1 = bH1 / aH0;
-    coeffs[N_DF].a0 = aH0 / aH0;
-    coeffs[N_DF].a1 = aH1 / aH0;
+    coeffs[N_EQ].b0 = bH0 / aH0;
+    coeffs[N_EQ].b1 = bH1 / aH0;
+    coeffs[N_EQ].a0 = aH0 / aH0;
+    coeffs[N_EQ].a1 = aH1 / aH0;
 }
 
 void PropEQ::interactionMatrix(double* g, double gw, double* wg, double* wc, double* bw)
@@ -239,12 +234,15 @@ void PropEQ::interactionMatrix(double* g, double gw, double* wg, double* wc, dou
 
 void PropEQ::zeroCoefficients()
 {
-    coeffs->b0 = 0.0;
-    coeffs->b1 = 0.0;
-    coeffs->b2 = 0.0;
-    coeffs->a0 = 0.0;
-    coeffs->a1 = 0.0;
-    coeffs->a2 = 0.0;
+    for (int i = 0; i < N_EQ + 1; i++) {
+        coeffs[i].b0 = 0.0;
+        coeffs[i].b1 = 0.0;
+        coeffs[i].b2 = 0.0;
+        coeffs[i].a0 = 0.0;
+        coeffs[i].a1 = 0.0;
+        coeffs[i].a2 = 0.0;
+    }
+
 }
 
 float PropEQ::clampValue(float v, float lower, float upper)
@@ -273,17 +271,17 @@ std::vector<double> PropEQ::getCoefficients(double g, double gb, double w0, doub
 
 void PropEQ::enforceStability()
 {
-	for (int i = 0; i < N_EQ; i++)
-	{
-        if (abs(coeffs[i].a1) >= 1.0 + coeffs[i].a2)
-        {
+	//for (int i = 0; i < N_EQ; i++)
+	//{
+ //       if (abs(coeffs[i].a1) >= 1.0 + coeffs[i].a2)
+ //       {
 
-        }
-        if (abs(coeffs[i].a2) >= 1.0)
-        {
+ //       }
+ //       if (abs(coeffs[i].a2) >= 1.0)
+ //       {
 
-        }
-	}
+ //       }
+	//}
 }
 
 void PropEQ::updateState(int idx)
@@ -293,11 +291,11 @@ void PropEQ::updateState(int idx)
     states[idx].y2 = states[idx].y1;
     states[idx].y1 = states[idx].y0;
 
-	// Clip states for stability - this should be addressed in the future
-    states[idx].x2 = clampValue(states[idx].x2, -1.f, 1.f);
-    states[idx].x1 = clampValue(states[idx].x1, -1.f, 1.f);
-    states[idx].y2 = clampValue(states[idx].y2, -1.f, 1.f);
-    states[idx].y1 = clampValue(states[idx].y1, -1.f, 1.f);
+	 //Clip states for stability - this should be addressed in the future
+    states[idx].x2 = clampValue(states[idx].x2, -1.5f, 1.5f);
+    states[idx].x1 = clampValue(states[idx].x1, -1.5f, 1.5f);
+    states[idx].y2 = clampValue(states[idx].y2, -1.5f, 1.5f);
+    states[idx].y1 = clampValue(states[idx].y1, -1.5f, 1.5f);
 
 }
 
