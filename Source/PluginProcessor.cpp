@@ -60,6 +60,10 @@ ReverberatorAudioProcessor::ReverberatorAudioProcessor()
         parameters.addParameterListener(parameterName, this);
     }
 
+    parameterName = "matrix_type";
+	matrixTypeParameter = parameters.getRawParameterValue(parameterName);
+	parameters.addParameterListener(parameterName, this);
+
     reverbProcessor = std::make_unique<ReverbProcessor>();
     DBG("ReverbProcessor created");
 }
@@ -142,6 +146,7 @@ void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     reverbProcessor->setPredelayLengthParameter(predelayLengthParameter);
     reverbProcessor->setModFrequencyParameters(modFreqParameters);
     reverbProcessor->setModDepthParameters(modDepthParameters);
+    reverbProcessor->setMatrix(static_cast<MatrixType>((int)*matrixTypeParameter / 100));
 }
 
 void ReverberatorAudioProcessor::releaseResources()
@@ -254,27 +259,27 @@ juce::AudioProcessorValueTreeState::ParameterLayout ReverberatorAudioProcessor::
     
     params.add(std::make_unique<AudioParameterFloat>("delay_length_min", "delay_length_min", 0.0f, 100.0f, 50.0f));
     params.add(std::make_unique<AudioParameterFloat>("delay_length_max", "delay_length_max", 0.0f, 100.0f, 50.0f));
-    params.add(std::make_unique<AudioParameterFloat>("predelay_length", "predelay_length", 0.0f, 100.0f, 20.0f));
+    params.add(std::make_unique<AudioParameterFloat>("predelay_length", "predelay_length", 0.0f, 100.0f, 00.0f));
     juce::String name = "";
     for (int j = 0; j < N_EQ; j++) {
         name = "RT_" + String(j);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 100.0f));
     }
     for (int j = 0; j < N_EQ; j++) {
         name = "tonal_gain_" + String(j);
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 100.0f));
     }
     for (int i = 0; i < N_LINES; i++) {
         name = "b" + String(i) + "_gain";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 100.0f));
         name = "c" + String(i) + "_gain";
-        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 50.0f));
+        params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 100.0f));
         name = "mod" + String(i) + "_freq";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 0.0f));
         name = "mod" + String(i) + "_depth";
         params.add(std::make_unique<AudioParameterFloat>(name, name, 0.0f, 100.0f, 0.0f));
     }
-    params.add(std::make_unique<AudioParameterInt>("matrix_type", "matrix_type", 0, 100, 0));
+    params.add(std::make_unique<AudioParameterFloat>("matrix_type", "matrix_type", 0.f, 100.f, 0.f));
 
     return params;
 }

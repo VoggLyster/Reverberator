@@ -96,7 +96,8 @@ void ReverbProcessor::setTonalGainParameters(std::atomic<float>* tonalGainParame
     tonalGain.resize(N_EQ, 0.f);
 
     for (int j = 0; j < N_EQ; j++) {
-        tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 60.0) - 57.0;
+        //tonalGain[j] = (*tonalGainParameters[j] / 100.0 * 60.0) - 57.0;
+        tonalGain[j] = 0.0;
     }
     if(tonalFilter != nullptr)
         tonalFilter->setGainVector(tonalGain);
@@ -104,20 +105,20 @@ void ReverbProcessor::setTonalGainParameters(std::atomic<float>* tonalGainParame
 
 void ReverbProcessor::setDelayLengthParameters(std::atomic<float>* delayLengthMinParameter, std::atomic<float>* delayLengthMaxParameter)
 {
-    delayLengthMin = 20.0f + 0.1f * *delayLengthMinParameter;
-    delayLengthMax = delayLengthMin + 20.0f + 0.2f * *delayLengthMaxParameter;
-    std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);	
+    //delayLengthMin = 20.0f + 0.1f * *delayLengthMinParameter;
+    //delayLengthMax = delayLengthMin + 20.0f + 0.2f * *delayLengthMaxParameter;
+    //std::vector<int> delayLengths_ = getPrimePowerDelays(delayLengthMin, delayLengthMax);	
 	
     for (int i = 0; i < N_LINES; i++) {
-        delayLengths[i] = delayLengths_[i];
+        //delayLengths[i] = delayLengths_[i];
         if(delayLines[i] != nullptr)
             delayLines[i]->setDelay(delayLengths[i]);
     }
 
-    for (int i = 0; i < N_LINES; i++) {
-        if(propEQs[i] != nullptr)
-            propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
-    }
+    //for (int i = 0; i < N_LINES; i++) {
+    //    if(propEQs[i] != nullptr)
+    //        propEQs[i]->setGainVector(RTtoGain(attenuationGain, i));
+    //}
 }
 
 void ReverbProcessor::setPredelayLengthParameter(std::atomic<float>* predelayLengthParameter)
@@ -287,8 +288,9 @@ std::vector<double> ReverbProcessor::RTtoGain(std::vector<float> RT, int idx)
     float delta;
 	
 	for (int i = 0; i < N_EQ; i++) {
-        delta = (-60 / (fs * RT[i]));
-        gain.push_back(delta * delayLengths[idx]);
+        //delta = (-60 / (fs * RT[i]));
+        //gain.push_back(delta * delayLengths[idx]);
+        gain.push_back(0.0);
 	}
 
     return gain;

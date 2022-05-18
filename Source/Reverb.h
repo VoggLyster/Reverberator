@@ -90,8 +90,8 @@ private:
     float b[N_LINES];
     float c[N_LINES];
     float tempOut[N_LINES];
-    int delayLengths[N_LINES];
-    //int delayLengths[16] = {441,513,593,738,890,1135,1388,1689,2059,2446,2874,3388,3906,4466,5089,5755};
+    //int delayLengths[N_LINES];
+    int delayLengths[16] = {441,513,593,738,890,1135,1388,1689,2059,2446,2874,3388,3906,4466,5089,5755};
     int delayLengthMax;
     int delayLengthMin;
     int primes[16] = { 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53 };

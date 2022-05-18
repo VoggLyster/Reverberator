@@ -291,10 +291,10 @@ void PropEQ::updateState(int idx)
     states[idx].y1 = states[idx].y0;
 
 	 //Clip states for stability - this should be addressed in the future
-    states[idx].x2 = clampValue(states[idx].x2, -1.5f, 1.5f);
-    states[idx].x1 = clampValue(states[idx].x1, -1.5f, 1.5f);
-    states[idx].y2 = clampValue(states[idx].y2, -1.5f, 1.5f);
-    states[idx].y1 = clampValue(states[idx].y1, -1.5f, 1.5f);
+    //states[idx].x2 = clampValue(states[idx].x2, -1.5f, 1.5f);
+    //states[idx].x1 = clampValue(states[idx].x1, -1.5f, 1.5f);
+    //states[idx].y2 = clampValue(states[idx].y2, -1.5f, 1.5f);
+    //states[idx].y1 = clampValue(states[idx].y1, -1.5f, 1.5f);
 
 }
 
