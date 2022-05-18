@@ -39,7 +39,7 @@ private:
     void enforceStability();
     void updateState(int idx);
     float filter(double input, int idx);
-    void interactionMatrix(double* g, double gw, double* wg, double* wc, double* bw);
+    void setInteractionMatrix(double* g, double gw, double* wg, double* wc, double* bw);
     float clampValue(float v, float lower, float upper);
     void zeroCoefficients();
 
@@ -56,19 +56,16 @@ private:
 
     double commandGainFrequencies[N_EQ] = { 31.25, 62.5, 125, 250, 500, 1000, 2000, 4000, 8000, 16000 };
     double centerFrequencies[N_DF] = { 31.25, 44.2, 62.5, 88.39, 125, 176.78, 250, 353.55, 500, 707.11, 1000, 1414.2, 2000, 2828.4, 4000, 5656.9, 8000, 11313.7, 16000 };
-    //std::vector<double> wg;
-    //std::vector<double> wc;
-    //std::vector<double> bandwidths;
     double bandwidths[N_EQ];
-    double wg[N_EQ];
-    double wc[N_DF];
-    const double gw = 0.3f;
-    const double cc = pow(10, 19.0 / 20.0);
-    std::vector<std::vector<double>> leak;
-    std::vector<double> inG;
+    double omegaGainFrequencies[N_EQ];
+    double omegaCenterFrequencies[N_DF];
+    const double cParameter = 0.3f;
+    const double protoGainValue = pow(10, 19.0 / 20.0);
+    std::vector<std::vector<double>> interactionMatrix;
+    std::vector<double> protoGains;
 
-    Eigen::MatrixXd leakMat{ N_DF, N_EQ };
-    Eigen::MatrixXd leakMat2{ N_DF, N_EQ };
+    Eigen::MatrixXd eigenInteractionMat{ N_DF, N_EQ };
+    Eigen::MatrixXd eigenInteractionMat2{ N_DF, N_EQ };
 
     Eigen::VectorXd Gdb2Vect;
     Eigen::VectorXd solution;

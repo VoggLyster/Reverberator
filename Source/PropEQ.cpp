@@ -33,7 +33,7 @@ void PropEQ::reset()
     G2woptdb.clear();
     G2wopt.clear();
 
-    leak.clear();
+    interactionMatrix.clear();
 
     Goptdb.resize(N_EQ, 0);
     Gopt.resize(N_EQ, 0);
@@ -42,7 +42,7 @@ void PropEQ::reset()
     G2woptdb.resize(N_EQ, 0);
     G2wopt.resize(N_EQ, 0);
 
-    leak.resize(N_EQ, std::vector<double>(N_DF, 0));
+    interactionMatrix.resize(N_EQ, std::vector<double>(N_DF, 0));
 
     for (int i = 0; i < N_EQ + 1; i++) {
         states[i].x1 = 0.f;
@@ -84,23 +84,23 @@ void PropEQ::setPolesAndZeros()
     }
 
     for (int i = 0; i < N_EQ; i++) {
-        wg[i] = 2.0 * juce::double_Pi * commandGainFrequencies[i] / samplerate;
+        omegaGainFrequencies[i] = 2.0 * juce::double_Pi * commandGainFrequencies[i] / samplerate;
     }
 
     for (int i = 0; i < N_DF; i++) {
-        wc[i] = 2.0 * juce::double_Pi * centerFrequencies[i] / samplerate;
+        omegaCenterFrequencies[i] = 2.0 * juce::double_Pi * centerFrequencies[i] / samplerate;
     }
 
     for (int i = 0; i < N_EQ; i++) {
-        bandwidths[i] = 1.5 * wg[i];
+        bandwidths[i] = 1.5 * omegaGainFrequencies[i];
     }
 
     bandwidths[N_EQ - 3] = 0.93 * bandwidths[N_EQ - 3];
     bandwidths[N_EQ - 2] = 0.78 * bandwidths[N_EQ - 2];
-    bandwidths[N_EQ - 1] = 0.76 * wg[N_EQ - 1];
+    bandwidths[N_EQ - 1] = 0.76 * omegaGainFrequencies[N_EQ - 1];
 
-    inG.resize(N_EQ, cc);
-    interactionMatrix(&inG[0], gw, &wg[0], &wc[0], &bandwidths[0]);
+    protoGains.resize(N_EQ, protoGainValue);
+    setInteractionMatrix(&protoGains[0], cParameter, &omegaGainFrequencies[0], &omegaCenterFrequencies[0], &bandwidths[0]);
 
     gDB2.resize(N_DF, 0);
 
@@ -111,18 +111,17 @@ void PropEQ::setPolesAndZeros()
             gDB2[i] = (gDB2[i - 1] + gDB2[i + 1]) / 2.0;
     }
 
-    // Linear least squares /// Mainly just copied from S.Willemsen
     for (int i = 0; i < N_EQ; i++)
     {
         for (int j = 0; j < N_DF; j++)
         {
-            leakMat(j, i) = leak[i][j];
+            eigenInteractionMat(j, i) = interactionMatrix[i][j];
         }
     }
 
     Gdb2Vect = Eigen::VectorXd::Map(&gDB2[0], gDB2.size());
     Gdb2Vect = Gdb2Vect.transpose();
-    solution = leakMat.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Gdb2Vect);
+    solution = eigenInteractionMat.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Gdb2Vect);
 
     for (int i = 0; i < N_EQ; i++)
     {
@@ -134,19 +133,19 @@ void PropEQ::setPolesAndZeros()
         Gopt[k] = pow(10, Goptdb[k] / 20.0);
     }
 
-    interactionMatrix(&Gopt[0], gw, &wg[0], &wc[0], &bandwidths[0]);
+    setInteractionMatrix(&Gopt[0], cParameter, &omegaGainFrequencies[0], &omegaCenterFrequencies[0], &bandwidths[0]);
 
     for (int i = 0; i < N_EQ; i++)
     {
         for (int j = 0; j < N_DF; j++)
         {
-            leakMat2(j, i) = leak[i][j];
+            eigenInteractionMat2(j, i) = interactionMatrix[i][j];
         }
     }
 
     G2optdbVect = Eigen::VectorXd::Map(&gDB2[0], gDB2.size());
     G2optdbVect = G2optdbVect.transpose();
-    solution2 = leakMat.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(G2optdbVect);
+    solution2 = eigenInteractionMat2.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(G2optdbVect);
 
     for (int i = 0; i < N_EQ; i++)
     {
@@ -158,12 +157,12 @@ void PropEQ::setPolesAndZeros()
     for (int k = 0; k < N_EQ; k++)
     {
         G2opt[k] = pow(10, G2optdb[k] / 20.0);
-        G2woptdb[k] = gw * G2optdb[k];
+        G2woptdb[k] = cParameter * G2optdb[k];
         G2wopt[k] = pow(10, G2woptdb[k] / 20.0);
     }
 
     for (int i = 0; i < N_EQ; i++) {
-        tempCoeffs = getCoefficients(G2opt[i], G2wopt[i], wg[i], bandwidths[i]);
+        tempCoeffs = getCoefficients(G2opt[i], G2wopt[i], omegaGainFrequencies[i], bandwidths[i]);
         coeffs[i].b0 = tempCoeffs[0] * pow(10, (G0 / 200.0));
         coeffs[i].b1 = tempCoeffs[1] * pow(10, (G0 / 200.0));
         coeffs[i].b2 = tempCoeffs[2] * pow(10, (G0 / 200.0));
@@ -188,7 +187,7 @@ void PropEQ::setPolesAndZeros()
     coeffs[N_EQ].a1 = aH1 / aH0;
 }
 
-void PropEQ::interactionMatrix(double* g, double gw, double* wg, double* wc, double* bw)
+void PropEQ::setInteractionMatrix(double* g, double gw, double* wg, double* wc, double* bw)
 {
     std::vector<std::complex<double>> dummyVect(N_EQ, 0);
     std::vector<double> Gdb(N_EQ, 0);
@@ -225,7 +224,7 @@ void PropEQ::interactionMatrix(double* g, double gw, double* wg, double* wc, dou
                     + complexCoeffs[2] * exp(-2.0 * i * wc[k]))
                     / (complexCoeffs[3] + complexCoeffs[4] * exp(-i * wc[k])
                         + complexCoeffs[5] * exp(-2.0 * i * wc[k]));
-                leak[m][k] = abs(20.0 * log10(H) / Gdb[m]);
+                interactionMatrix[m][k] = abs(20.0 * log10(H) / Gdb[m]);
             }
         }
     }
