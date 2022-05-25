@@ -36,7 +36,6 @@ public:
 
 private:
     std::vector<double> getCoefficients(double g, double gb, double w0, double bw);
-    void enforceStability();
     void updateState(int idx);
     float filter(double input, int idx);
     void setInteractionMatrix(double* g, double gw, double* wg, double* wc, double* bw);
@@ -46,8 +45,8 @@ private:
     double samplerate;
     bool isReady = false;
 
-    std::vector<double> gDB;
-    std::vector<double> gDB2;
+    std::vector<double> g;
+    std::vector<double> g2;
 
     std::vector<double> tempCoeffs;
     double x0;
@@ -67,16 +66,16 @@ private:
     Eigen::MatrixXd eigenInteractionMat{ N_DF, N_EQ };
     Eigen::MatrixXd eigenInteractionMat2{ N_DF, N_EQ };
 
-    Eigen::VectorXd Gdb2Vect;
+    Eigen::VectorXd g2Vect;
     Eigen::VectorXd solution;
-    Eigen::VectorXd G2optdbVect;
+    Eigen::VectorXd g2optVect;
     Eigen::VectorXd solution2;
 
-    std::vector<double> Goptdb;
+    std::vector<double> gopt;
     std::vector<double> Gopt;
-    std::vector<double> G2optdb;
+    std::vector<double> g2opt;
     std::vector<double> G2opt;
-    std::vector<double> G2woptdb;
+    std::vector<double> g2wopt;
     std::vector<double> G2wopt;
 };
 

@@ -17,6 +17,7 @@ enum MatrixType
     hadamard = 1,
 };
 
+// Unused class in current implementation
 class Biquad
 {
 public:
@@ -34,6 +35,7 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Biquad)
 };
 
+// Unused class in current implementation
 class SVF
 {
 public:
@@ -64,7 +66,6 @@ public:
 
     void prepare(double samplerate, int samplesPerBlock);
 
-
     void setBGainParameters(std::atomic<float>* bParameters[N_LINES]);
     void setCGainParameters(std::atomic<float>* cParameters[N_LINES]);
     void setAttenuationGainParameters(std::atomic<float>* attenuationGainParameters[N_EQ]);
@@ -91,7 +92,6 @@ private:
     float c[N_LINES];
     float tempOut[N_LINES];
     int delayLengths[N_LINES];
-    //int delayLengths[16] = {441,513,593,738,890,1135,1388,1689,2059,2446,2874,3388,3906,4466,5089,5755};
     int delayLengthMax;
     int delayLengthMin;
     int primes[16] = { 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53 };

@@ -20,26 +20,26 @@ PropEQ::PropEQ(double _samplerate)
 
 void PropEQ::setGainVector(std::vector<double> gainVector)
 {
-    gDB = gainVector;
+    g = gainVector;
     setPolesAndZeros();
 }
 
 void PropEQ::reset()
 {
-    Goptdb.clear();
+    gopt.clear();
     Gopt.clear();
-    G2optdb.clear();
+    g2opt.clear();
     G2opt.clear();
-    G2woptdb.clear();
+    g2wopt.clear();
     G2wopt.clear();
 
     interactionMatrix.clear();
 
-    Goptdb.resize(N_EQ, 0);
+    gopt.resize(N_EQ, 0);
     Gopt.resize(N_EQ, 0);
-    G2optdb.resize(N_EQ, 0);
+    g2opt.resize(N_EQ, 0);
     G2opt.resize(N_EQ, 0);
-    G2woptdb.resize(N_EQ, 0);
+    g2wopt.resize(N_EQ, 0);
     G2wopt.resize(N_EQ, 0);
 
     interactionMatrix.resize(N_EQ, std::vector<double>(N_DF, 0));
@@ -52,8 +52,8 @@ void PropEQ::reset()
         states[i].y2 = 0.f;
     }
 
-    gDB.resize(N_EQ, 0);
-    gDB2.resize(N_EQ, 0);
+    g.resize(N_EQ, 0);
+    g2.resize(N_EQ, 0);
 
     zeroCoefficients();
 }
@@ -77,10 +77,10 @@ float PropEQ::filter(double x, int idx)
 
 void PropEQ::setPolesAndZeros()
 {
-    float G0 = (gDB[N_EQ / 2] + gDB[N_EQ / 2 + 1]) * 0.5;
+    float G0 = (g[N_EQ / 2] + g[N_EQ / 2 + 1]) * 0.5;
 
     for (int i = 0; i < N_EQ; i++) {
-        gDB[i] = -G0 + gDB[i];
+        g[i] = -G0 + g[i];
     }
 
     for (int i = 0; i < N_EQ; i++) {
@@ -102,13 +102,13 @@ void PropEQ::setPolesAndZeros()
     protoGains.resize(N_EQ, protoGainValue);
     setInteractionMatrix(&protoGains[0], cParameter, &omegaGainFrequencies[0], &omegaCenterFrequencies[0], &bandwidths[0]);
 
-    gDB2.resize(N_DF, 0);
+    g2.resize(N_DF, 0);
 
     for (int i = 0; i < N_DF; i++) {
         if (i % 2 == 0)
-            gDB2[i] = gDB[i / 2];
+            g2[i] = g[i / 2];
         else
-            gDB2[i] = (gDB2[i - 1] + gDB2[i + 1]) / 2.0;
+            g2[i] = (g2[i - 1] + g2[i + 1]) / 2.0;
     }
 
     for (int i = 0; i < N_EQ; i++)
@@ -119,18 +119,18 @@ void PropEQ::setPolesAndZeros()
         }
     }
 
-    Gdb2Vect = Eigen::VectorXd::Map(&gDB2[0], gDB2.size());
-    Gdb2Vect = Gdb2Vect.transpose();
-    solution = eigenInteractionMat.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(Gdb2Vect);
+    g2Vect = Eigen::VectorXd::Map(&g2[0], g2.size());
+    g2Vect = g2Vect.transpose();
+    solution = eigenInteractionMat.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(g2Vect);
 
     for (int i = 0; i < N_EQ; i++)
     {
-        Goptdb[i] = solution(i);
+        gopt[i] = solution(i);
     }
 
     for (int k = 0; k < N_EQ; k++)
     {
-        Gopt[k] = pow(10, Goptdb[k] / 20.0);
+        Gopt[k] = pow(10, gopt[k] / 20.0);
     }
 
     setInteractionMatrix(&Gopt[0], cParameter, &omegaGainFrequencies[0], &omegaCenterFrequencies[0], &bandwidths[0]);
@@ -143,22 +143,22 @@ void PropEQ::setPolesAndZeros()
         }
     }
 
-    G2optdbVect = Eigen::VectorXd::Map(&gDB2[0], gDB2.size());
-    G2optdbVect = G2optdbVect.transpose();
-    solution2 = eigenInteractionMat2.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(G2optdbVect);
+    g2optVect = Eigen::VectorXd::Map(&g2[0], g2.size());
+    g2optVect = g2optVect.transpose();
+    solution2 = eigenInteractionMat2.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(g2optVect);
 
     for (int i = 0; i < N_EQ; i++)
     {
-        G2optdb[i] = solution2(i);
-		if (G2optdb[i] <= 0.0)
-			G2optdb[i] = 0.0;
+        g2opt[i] = solution2(i);
+		if (g2opt[i] <= 0.0)
+            g2opt[i] = 0.0;
     }
 
     for (int k = 0; k < N_EQ; k++)
     {
-        G2opt[k] = pow(10, G2optdb[k] / 20.0);
-        G2woptdb[k] = cParameter * G2optdb[k];
-        G2wopt[k] = pow(10, G2woptdb[k] / 20.0);
+        G2opt[k] = pow(10, g2opt[k] / 20.0);
+        g2wopt[k] = cParameter * g2opt[k];
+        G2wopt[k] = pow(10, g2wopt[k] / 20.0);
     }
 
     for (int i = 0; i < N_EQ; i++) {
@@ -172,7 +172,7 @@ void PropEQ::setPolesAndZeros()
     }
 
     float fH = 20200.0f;
-    float gH = pow(10, gDB[N_EQ - 1] / 20.0);
+    float gH = pow(10, g[N_EQ - 1] / 20.0);
     float wH = 2.0 * juce::double_Pi * fH / samplerate;
     float tmp = sqrt(gH) * tan(wH * 0.5);
 
@@ -266,21 +266,6 @@ std::vector<double> PropEQ::getCoefficients(double g, double gb, double w0, doub
     double a3 = (1.0 - beta) / (1.0 + beta);
 
     return std::vector<double> {b1, b2, b3, a1, a2, a3};
-}
-
-void PropEQ::enforceStability()
-{
-	//for (int i = 0; i < N_EQ; i++)
-	//{
- //       if (abs(coeffs[i].a1) >= 1.0 + coeffs[i].a2)
- //       {
-
- //       }
- //       if (abs(coeffs[i].a2) >= 1.0)
- //       {
-
- //       }
-	//}
 }
 
 void PropEQ::updateState(int idx)

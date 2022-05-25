@@ -146,8 +146,6 @@ void ReverberatorAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 
 void ReverberatorAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -157,13 +155,10 @@ bool ReverberatorAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
     juce::ignoreUnused (layouts);
     return true;
   #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
@@ -185,19 +180,17 @@ void ReverberatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
 
     auto* leftChannelData = buffer.getWritePointer(0);
-    //auto* rightChannelData = buffer.getWritePointer(1);
 
     for (int n = 0; n < buffer.getNumSamples(); n++) {
         float output = reverbProcessor->process(leftChannelData[n]);
         leftChannelData[n] = output;
-        //rightChannelData[n] = output;
     }
 }
 
 //==============================================================================
 bool ReverberatorAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* ReverberatorAudioProcessor::createEditor()

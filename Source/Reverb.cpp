@@ -201,6 +201,7 @@ void ReverbProcessor::setMatrix(MatrixType type)
     A = juce::dsp::Matrix<float>(N_LINES, N_LINES, matrix);
 }
 
+// Unused function in current implementation
 std::vector<int> ReverbProcessor::generateCoprimeRange(int delayLengthMaxSamples, int delayLengthMinSamples)
 {
     int range = delayLengthMaxSamples - delayLengthMinSamples;
@@ -231,6 +232,7 @@ int ReverbProcessor::gcd(int a, int b)
     return gcd(b, a % b);
 }
 
+// Unused class in current implementation
 std::vector<int> ReverbProcessor::generateDelayLineLengths(int delayLengthMaxSamples, int delayLengthMinSamples)
 {
     // https://ccrma.stanford.edu/~jos/pasp/Prime_Power_Delay_Line_Lengths.html
@@ -244,7 +246,6 @@ std::vector<int> ReverbProcessor::generateDelayLineLengths(int delayLengthMaxSam
         int Mi = delayLengthMinSamples + (i * rangeInterval);
         int mi = 0.5 + (logf(Mi) / logf(primes[i]));
         Mi = pow(primes[i],mi);
-        DBG(juce::String(mi));
         DBG(juce::String(Mi));
         delayLengths.push_back(Mi);
     }
@@ -274,7 +275,6 @@ std::vector<int> ReverbProcessor::getPrimePowerDelays(float minPath, float maxPa
         int Mi = dmin * pow((dmax / dmin), (i / float(N_LINES - 1)));
         int mi = floor(0.5 + log(Mi) / log(primes[i]));
         Mi = juce::jmin(int(pow(primes[i], mi)), maxDelayLineLength);
-        //DBG(juce::String(mi));
         DBG(juce::String(Mi));
         _delayLengths.push_back(Mi);
     }
